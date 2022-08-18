@@ -34,7 +34,7 @@
                             "description": "The proof of ownership (a merkle path to the state root)",
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/NUM_AS_HEX"
+                                "$ref": "#/components/schemas/MERKLE_PATH"
                             }
                         }
                     }
@@ -45,7 +45,7 @@
     "components": {
         "schemas": {
             "NUM_AS_HEX": {
-                "title": "An integer number, or any series of bytes, in hex format (0x...)",
+                "description": "An integer number in hex format (0x...)",
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]+$"
             },
@@ -53,6 +53,11 @@
                 "description": "The asset info calculated for a given asset",
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]{72}$"
+            },
+            "MERKLE_PATH": {
+                "description": "A series of bytes denoting a path in a merkle tree. Bytes given as pairs of hex digits",
+                "type": "string",
+                "pattern": "^0x([a-fA-F0-9]{2})+$"
             }
         }
     }
