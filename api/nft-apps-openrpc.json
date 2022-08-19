@@ -43,7 +43,32 @@
             }
         },
         {
-            "name": "starkex_getAllAssets",
+            "name": "starkex_getAsset",
+            "description": "Given an asset id retrieve all the asset information",
+            "params": [
+                {
+                    "name": "asset_id",
+                    "description": "The asset's id",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/ERC721_ASSET_ID"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "$ref": "#/components/schemas/NFT_ASSET"
+                }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/ASSET_NOT_FOUND"
+                }
+            ]
+        },
+        {
+            "name": "starkex_getAssetsByFilter",
             "description": "Retrieve all assets that adhere to the given filter",
             "params": [
                 {
@@ -63,18 +88,7 @@
                 "schema": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "asset_id": {
-                                "$ref": "#/components/schemas/ERC721_ASSET_ID"
-                            },
-                            "asset_info": {
-                                "$ref": "#/components/schemas/ERC721_ASSET_INFO"
-                            },
-                            "proof": {
-                                "$ref": "#/components/schemas/MERKLE_PATH"
-                            }
-                        }
+                        "$ref": "#/components/schemas/NFT_ASSET"
                     }
                 }
             }
@@ -82,6 +96,20 @@
     ],
     "components": {
         "schemas": {
+            "NFT_ASSET": {
+                "type": "object",
+                "properties": {
+                    "asset_id": {
+                        "$ref": "#/components/schemas/ERC721_ASSET_ID"
+                    },
+                    "asset_info": {
+                        "$ref": "#/components/schemas/ERC721_ASSET_INFO"
+                    },
+                    "proof": {
+                        "$ref": "#/components/schemas/MERKLE_PATH"
+                    }
+                }
+            },
             "NUM_AS_HEX": {
                 "description": "An integer number in hex format (0x...)",
                 "type": "string",
@@ -106,6 +134,12 @@
                 "description": "A label, alphanumeric English + underscore, with no spaces",
                 "type": "string",
                 "pattern": "^[a-zA-Z0-9_]+$"
+            }
+        },
+        "errors": {
+            "ASSET_NOT_FOUND": {
+                "code": 1,
+                "message": "Requested asset was not found"
             }
         }
     }
