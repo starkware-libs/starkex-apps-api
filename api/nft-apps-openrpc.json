@@ -74,14 +74,31 @@
                             "$ref": "#/components/schemas/KEYWORD"
                         }
                     }
+                },
+                {
+                    "name": "page_request",
+                    "description": "The information required to return a specific page of results",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/RESULT_PAGE_REQUEST"
+                    }
                 }
             ],
             "result": {
                 "name": "result",
                 "schema": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/components/schemas/NFT_ASSET"
+                    "type": "object",
+                    "properties": {
+                        "assets": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/NFT_ASSET"
+                            }
+                        },
+                        "page_response": {
+                            "description": "A pointer to the last element of the delivered page, can be used to sent with subsequent queries to more pages",
+                            "type": "string"
+                        }
                     }
                 }
             }
@@ -89,6 +106,22 @@
     ],
     "components": {
         "schemas": {
+            "RESULT_PAGE_REQUEST": {
+                "type": "object",
+                "properties": {
+                    "continuation_token": {
+                        "description": "a pointer to the last element of the delivered page, use this token in a subsequent query to obtain the next page",
+                        "type": "string"
+                    },
+                    "chunk_size": {
+                        "type": "integer",
+                        "minimum": 1
+                    }
+                },
+                "required": [
+                    "chunk_size"
+                ]
+            },
             "NFT_ASSET": {
                 "type": "object",
                 "properties": {
