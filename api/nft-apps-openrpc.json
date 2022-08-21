@@ -95,11 +95,14 @@
                                 "$ref": "#/components/schemas/NFT_ASSET"
                             }
                         },
-                        "page_response": {
+                        "continuation_token": {
                             "description": "A pointer to the last element of the delivered page, can be used to sent with subsequent queries to more pages",
                             "type": "string"
                         }
-                    }
+                    },
+                    "required": [
+                        "assets"
+                    ]
                 }
             }
         },
@@ -121,6 +124,54 @@
                 "description": "The requested collection information",
                 "schema": {
                     "$ref": "#/components/schemas/NFT_COLLECTION_INFO"
+                }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/COLLECTION_NOT_FOUND"
+                }
+            ]
+        },
+        {
+            "name": "starkex_getCollectionContent",
+            "description": "Given a collection id, retrieve assets in the collection",
+            "params": [
+                {
+                    "name": "collection_id",
+                    "description": "The requested collection id",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/COLLECTION_ID"
+                    }
+                },
+                {
+                    "name": "page_request",
+                    "description": "The information required to return a specific page of results",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/RESULT_PAGE_REQUEST"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "assets": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/NFT_ASSET"
+                            }
+                        },
+                        "continuation_token": {
+                            "description": "A pointer to the last element of the delivered page, can be used to sent with subsequent queries to more pages",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "assets"
+                    ]
                 }
             },
             "errors": [
