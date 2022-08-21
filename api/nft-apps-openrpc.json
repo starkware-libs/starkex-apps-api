@@ -102,10 +102,88 @@
                     }
                 }
             }
+        },
+        {
+            "name": "starkex_getCollectionInfo",
+            "description": "Given a collection id, retrieve the collection information",
+            "params": [
+                {
+                    "name": "collection_id",
+                    "description": "The requested collection id",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/COLLECTION_ID"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "description": "The requested collection information",
+                "schema": {
+                    "$ref": "#/components/schemas/NFT_COLLECTION_INFO"
+                }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/COLLECTION_NOT_FOUND"
+                }
+            ]
         }
     ],
     "components": {
         "schemas": {
+            "NFT_COLLECTION_INFO": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the NFT collection",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "A description of the NFT collection",
+                        "type": "string"
+                    },
+                    "contract_address": {
+                        "description": "Address of the NFT contract on L1",
+                        "$ref": "#/components/schemas/ETH_ADDRESS"
+                    },
+                    "collection_image_url": {
+                        "description": "A URL to an image for the collection",
+                        "type": "string"
+                    },
+                    "keywords": {
+                        "description": "List of keywords associated with this collection",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/KEYWORD"
+                        }
+                    },
+                    "metadata_scheme": {
+                        "description": "Schema of metadata properties for NFTs in this collection",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "is_in_blob": {
+                                    "description": "Designates whether this key is part of the minting blob",
+                                    "type": "boolean"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "TEXT",
+                                        "DISCRETE",
+                                        "ENUM"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "RESULT_PAGE_REQUEST": {
                 "type": "object",
                 "properties": {
@@ -234,6 +312,10 @@
             "ASSET_NOT_FOUND": {
                 "code": 1,
                 "message": "Requested asset was not found"
+            },
+            "COLLECTION_NOT_FOUND": {
+                "code": 2,
+                "message": "Requested collection not found"
             }
         }
     }
