@@ -28,7 +28,7 @@
                             "description": "The assets for this user",
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/ERC721_ASSET_INFO"
+                                "$ref": "#/components/schemas/ASSET_INFO"
                             }
                         },
                         "proof": {
@@ -51,7 +51,7 @@
                     "description": "The asset's id",
                     "required": true,
                     "schema": {
-                        "$ref": "#/components/schemas/ERC721_ASSET_ID"
+                        "$ref": "#/components/schemas/ASSET_ID"
                     }
                 }
             ],
@@ -100,10 +100,10 @@
                 "type": "object",
                 "properties": {
                     "asset_id": {
-                        "$ref": "#/components/schemas/ERC721_ASSET_ID"
+                        "$ref": "#/components/schemas/ASSET_ID"
                     },
                     "asset_info": {
-                        "$ref": "#/components/schemas/ERC721_ASSET_INFO"
+                        "$ref": "#/components/schemas/ASSET_INFO"
                     },
                     "proof": {
                         "$ref": "#/components/schemas/MERKLE_PATH"
@@ -115,12 +115,12 @@
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]+$"
             },
-            "ERC721_ASSET_INFO": {
+            "ASSET_INFO": {
                 "description": "The asset info calculated for a given asset",
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]{72}$"
             },
-            "ERC721_ASSET_ID": {
+            "ASSET_ID": {
                 "description": "The asset id of for an NFT (ERC721) asset. 32 bytes with 5 MSB zeroed",
                 "type": "string",
                 "pattern": "^0x0[0-7]{1}[a-fA-F0-9]{62}$"
