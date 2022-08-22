@@ -289,6 +289,64 @@
                     ]
                 }
             }
+        },
+        {
+            "name": "starkex_getUserOrderHistory",
+            "description": "For a given user, get the order history for that user",
+            "params": [
+                {
+                    "name": "stark_key",
+                    "description": "The stark key identifying the user",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    }
+                },
+                {
+                    "name": "page_request",
+                    "description": "The information required to return a specific page of results",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/RESULT_PAGE_REQUEST"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "orders": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "order": {
+                                        "$ref": "#/components/schemas/ORDER"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "OPEN",
+                                            "CLOSED",
+                                            "EXPIRED",
+                                            "SETTLED",
+                                            "CANCELLED"
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "continuation_token": {
+                            "description": "A pointer to the last element of the delivered page, can be used to sent with subsequent queries to more pages",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "orders"
+                    ]
+                }
+            }
         }
     ],
     "components": {
