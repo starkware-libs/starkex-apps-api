@@ -235,43 +235,7 @@
                     "description": "The submitted order",
                     "required": true,
                     "schema": {
-                        "type": "object",
-                        "properties": {
-                            "type": {
-                                "type": "string",
-                                "enum": [
-                                    "BUY",
-                                    "SELL"
-                                ]
-                            },
-                            "vault_id": {
-                                "description": "The vault id holding the bought/sold NFT",
-                                "$ref": "#/components/schemas/VAULT_ID"
-                            },
-                            "asset_id": {
-                                "description": "The asset id to buy/sell",
-                                "$ref": "#/components/schemas/ASSET_ID"
-                            },
-                            "amount": {
-                                "description": "The amount to sell/buy",
-                                "type": "integer",
-                                "minimum": 1
-                            },
-                            "expiration_timestamp": {
-                                "description": "The order expiration time",
-                                "type": "integer",
-                                "minimum": 0,
-                                "maximum": 4194303,
-                                "$comment": "upper limit is 2^22-1, taken from StarkEx code - ExpirationTimestampField"
-                            },
-                            "signature": {
-                                "description": "The user's signature on the order",
-                                "$ref": "#/components/schemas/SIGNATURE"
-                            },
-                            "fee_limit": {
-                                "$ref": "#/components/schemas/FEE_LIMIT"
-                            }
-                        }
+                        "$ref": "#/components/schemas/ORDER"
                     }
                 }
             ],
@@ -279,10 +243,95 @@
                 "name": "result",
                 "schema": true
             }
+        },
+        {
+            "name": "starkex_getOpenOrdersByFilter",
+            "description": "Get all the open orders that match the given filter",
+            "params": [
+                {
+                    "name": "filter",
+                    "description": "The filter used to choose the orders",
+                    "required": true,
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/KEYWORD"
+                        }
+                    }
+                },
+                {
+                    "name": "page_request",
+                    "description": "The information required to return a specific page of results",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/RESULT_PAGE_REQUEST"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "orders": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/ORDER"
+                            }
+                        },
+                        "continuation_token": {
+                            "description": "A pointer to the last element of the delivered page, can be used to sent with subsequent queries to more pages",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "orders"
+                    ]
+                }
+            }
         }
     ],
     "components": {
         "schemas": {
+            "ORDER": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "BUY",
+                            "SELL"
+                        ]
+                    },
+                    "vault_id": {
+                        "description": "The vault id holding the bought/sold NFT",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "asset_id": {
+                        "description": "The asset id to buy/sell",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "amount": {
+                        "description": "The amount to sell/buy",
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "expiration_timestamp": {
+                        "description": "The order expiration time",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 4194303,
+                        "$comment": "upper limit is 2^22-1, taken from StarkEx code - ExpirationTimestampField"
+                    },
+                    "signature": {
+                        "description": "The user's signature on the order",
+                        "$ref": "#/components/schemas/SIGNATURE"
+                    },
+                    "fee_limit": {
+                        "$ref": "#/components/schemas/FEE_LIMIT"
+                    }
+                }
+            },
             "VAULT_ID": {
                 "description": "A vault id, represented as a hex number",
                 "type": "string",
