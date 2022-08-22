@@ -225,10 +225,70 @@
                     ]
                 }
             }
+        },
+        {
+            "name": "starkex_submitOrder",
+            "description": "Submit an order to buy or sell an NFT",
+            "params": [
+                {
+                    "name": "order",
+                    "description": "The submitted order",
+                    "required": true,
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "BUY",
+                                    "SELL"
+                                ]
+                            },
+                            "vault_id": {
+                                "description": "The vault id holding the bought/sold NFT",
+                                "$ref": "#/components/schemas/VAULT_ID"
+                            },
+                            "asset_id": {
+                                "description": "The asset id to buy/sell",
+                                "$ref": "#/components/schemas/ASSET_ID"
+                            },
+                            "amount": {
+                                "description": "The amount to sell/buy",
+                                "type": "integer",
+                                "minimum": 1
+                            },
+                            "expiration_timestamp": {
+                                "description": "The order expiration time",
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 4194303,
+                                "$comment": "upper limit is 2^22-1, taken from StarkEx code - ExpirationTimestampField"
+                            },
+                            "signature": {
+                                "description": "The user's signature on the order",
+                                "$ref": "#/components/schemas/SIGNATURE"
+                            },
+                            "fee_limit": {
+                                "$ref": "#/components/schemas/FEE_LIMIT"
+                            }
+                        }
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": true
+            }
         }
     ],
     "components": {
         "schemas": {
+            "VAULT_ID": {
+                "description": "A vault id, represented as a hex number",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{16}$",
+                "$comment": "This is a superset of both validium and rollup vault ranges"
+            },
             "NFT_COLLECTION_INFO": {
                 "type": "object",
                 "properties": {
@@ -392,8 +452,43 @@
             },
             "MERKLE_PATH": {
                 "description": "A series of bytes denoting a path in a merkle tree. Bytes given as pairs of hex digits",
+                "$ref": "#/components/schemas/BYTES"
+            },
+            "SIGNATURE": {
+                "description": "A signature provided as a series of bytes",
+                "$ref": "#/components/schemas/BYTES"
+            },
+            "BYTES": {
+                "description": "A series of bytes denoted as pairs of hex digits",
                 "type": "string",
                 "pattern": "^0x([a-fA-F0-9]{2})+$"
+            },
+            "TOKEN_ID": {
+                "description": "An ID for a token",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{64}$",
+                "$comment": "A generalized case - 251 bits (and a bit extra)"
+            },
+            "FEE_LIMIT": {
+                "description": "Fee limit information provided by the user",
+                "type": "object",
+                "properties": {
+                    "token_id": {
+                        "description": "The token id of the fee",
+                        "$ref": "#/components/schemas/TOKEN_ID"
+                    },
+                    "source_vault_id": {
+                        "description": "The id of the vault from which the fee can be taken",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "fee_limit": {
+                        "description": "The fee limit, proportional to the signed buy/sell amount",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9223372036854775808,
+                        "$comment": "upper limit is 2^63, taken from definition of AmountField"
+                    }
+                }
             },
             "KEYWORD": {
                 "description": "A label, alphanumeric English + underscore, with no spaces",
