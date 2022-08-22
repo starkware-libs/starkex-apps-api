@@ -391,7 +391,16 @@
                         "type": "string"
                     },
                     "proof": {
-                        "$ref": "#/components/schemas/MERKLE_PATH"
+                        "type": "object",
+                        "properties": {
+                            "path": {
+                                "$ref": "#/components/schemas/MERKLE_PATH"
+                            },
+                            "root": {
+                                "description": "The state root where the path is relevant",
+                                "$ref": "#/components/schemas/STATE_ROOT"
+                            }
+                        }
                     },
                     "metadata": {
                         "$ref": "#/components/schemas/METDATA_DICT"
@@ -468,6 +477,12 @@
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]{64}$",
                 "$comment": "A generalized case - 251 bits (and a bit extra)"
+            },
+            "STATE_ROOT": {
+                "description": "The global state root",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{64}$",
+                "$comment": "251 bits (and a bit extra)"
             },
             "FEE_LIMIT": {
                 "description": "Fee limit information provided by the user",
