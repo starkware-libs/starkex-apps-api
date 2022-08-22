@@ -179,6 +179,52 @@
                     "$ref": "#/components/errors/COLLECTION_NOT_FOUND"
                 }
             ]
+        },
+        {
+            "name": "starkex_getCollectionsByFilter",
+            "description": "Given a filter, return all collection info that matches the filter",
+            "params": [
+                {
+                    "name": "filter",
+                    "description": "The filter used to choose the collections to return",
+                    "required": true,
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/KEYWORD"
+                        }
+                    }
+                },
+                {
+                    "name": "page_request",
+                    "description": "The information required to return a specific page of results",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/RESULT_PAGE_REQUEST"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "collections": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/NFT_COLLECTION_INFO"
+                            }
+                        },
+                        "continuation_token": {
+                            "description": "A pointer to the last element of the delivered page, can be used to sent with subsequent queries to more pages",
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "collections"
+                    ]
+                }
+            }
         }
     ],
     "components": {
