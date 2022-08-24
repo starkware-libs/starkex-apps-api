@@ -543,7 +543,7 @@
                         }
                     },
                     "metadata": {
-                        "$ref": "#/components/schemas/METDATA_DICT"
+                        "$ref": "#/components/schemas/METADATA_DICT"
                     },
                     "keywords": {
                         "type": "array",
