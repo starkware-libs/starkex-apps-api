@@ -415,6 +415,13 @@
                         "description": "A URL to an image for the collection",
                         "type": "string"
                     },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "ERC721",
+                            "ERC1155"
+                        ]
+                    },
                     "keywords": {
                         "description": "List of keywords associated with this collection",
                         "type": "array",
