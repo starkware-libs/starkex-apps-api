@@ -107,6 +107,32 @@
             }
         },
         {
+            "name": "starkex_createCollection",
+            "description": "Create a collection with the necessary info",
+            "params": [
+                {
+                    "name": "collection_info",
+                    "description": "The new collection information",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/NFT_COLLECTION_INFO"
+                    }
+                }
+            ],
+            "result": {
+                "name": "collection_id",
+                "description": "The newly created collection id",
+                "schema": {
+                    "$ref": "#/components/schemas/COLLECTION_ID"
+                }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/INVALID_COLLECTION_INFO"
+                }
+            ]
+        },
+        {
             "name": "starkex_getCollectionInfo",
             "description": "Given a collection id, retrieve the collection information",
             "params": [
@@ -645,6 +671,10 @@
             "COLLECTION_NOT_FOUND": {
                 "code": 2,
                 "message": "Requested collection not found"
+            },
+            "INVALID_COLLECTION_INFO": {
+                "code": 3,
+                "message": "Given collection information is invalid"
             }
         }
     }
