@@ -571,8 +571,16 @@
                 "$ref": "#/components/schemas/BYTES"
             },
             "SIGNATURE": {
-                "description": "A signature provided as a series of bytes",
-                "$ref": "#/components/schemas/BYTES"
+                "description": "A signature provided as a pair of numbers",
+                "type": "object",
+                "properties": {
+                    "r": {
+                        "$ref": "#/components/schemas/BYTES"
+                    },
+                    "s": {
+                        "$ref": "#/components/schemas/BYTES"
+                    }
+                }
             },
             "BYTES": {
                 "description": "A series of bytes denoted as pairs of hex digits",
