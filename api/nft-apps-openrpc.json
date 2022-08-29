@@ -373,10 +373,69 @@
                     ]
                 }
             }
+        },
+        {
+            "name": "starkex_submitSettlement",
+            "description": "Submit 2 orders (buy+sell) to be settled",
+            "params": [
+                {
+                    "name": "settlement",
+                    "required": true,
+                    "description": "The settlement to add",
+                    "schema": {
+                        "$ref": "#/components/schemas/SETTLEMENT"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": true
+            }
         }
     ],
     "components": {
         "schemas": {
+            "SETTLEMENT": {
+                "description": "A settlement of 2 orders (buy+sell) for NFTs",
+                "type": "object",
+                "properties": {
+                    "buy_order": {
+                        "$comment": "type of order must be BUY",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ORDER"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "stark_key": {
+                                        "$ref": "#/components/schemas/STARK_KEY"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "sell_order": {
+                        "$comment": "type of order must be SELL",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/ORDER"
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "stark_key": {
+                                        "$ref": "#/components/schemas/STARK_KEY"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "fee_limit": {
+                        "$ref": "#/components/schemas/FEE_LIMIT"
+                    }
+                }
+            },
             "ORDER": {
                 "type": "object",
                 "properties": {
