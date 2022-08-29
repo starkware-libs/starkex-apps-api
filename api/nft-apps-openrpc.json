@@ -447,9 +447,6 @@
                                 }
                             }
                         ]
-                    },
-                    "fee_limit": {
-                        "$ref": "#/components/schemas/FEE_LIMIT"
                     }
                 }
             },
