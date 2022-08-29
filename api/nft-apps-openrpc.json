@@ -69,10 +69,7 @@
                     "description": "The filter used to choose the assets to return",
                     "required": true,
                     "schema": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/KEYWORD"
-                        }
+                        "$ref": "#/components/schemas/FILTER"
                     }
                 },
                 {
@@ -215,10 +212,7 @@
                     "description": "The filter used to choose the collections to return",
                     "required": true,
                     "schema": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/KEYWORD"
-                        }
+                        "$ref": "#/components/schemas/FILTER"
                     }
                 },
                 {
@@ -395,6 +389,29 @@
     ],
     "components": {
         "schemas": {
+            "FILTER": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "keywords": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/KEYWORD"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "attributes": {
+                                "$ref": "#/components/schemas/METADATA_DICT"
+                            }
+                        }
+                    }
+                ]
+            },
             "SETTLEMENT": {
                 "description": "A settlement of 2 orders (buy+sell) for NFTs",
                 "type": "object",
