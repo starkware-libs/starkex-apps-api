@@ -466,6 +466,9 @@
                         "maximum": 4194303,
                         "$comment": "upper limit is 2^22-1, taken from StarkEx code - ExpirationTimestampField"
                     },
+                    "nonce": {
+                        "$ref": "#/components/schemas/NONCE"
+                    },
                     "signature": {
                         "description": "The user's signature on the order",
                         "$ref": "#/components/schemas/SIGNATURE"
@@ -718,8 +721,14 @@
                 "pattern": "^[a-zA-Z0-9_]+$"
             },
             "COLLECTION_ID": {
-                "type": "number",
+                "type": "integer",
                 "minimum": 0
+            },
+            "NONCE": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647,
+                "$comment": "Maximum is 2^31-1, taken from definition of NonceField in StarkEx"
             }
         },
         "errors": {
