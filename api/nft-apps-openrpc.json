@@ -520,7 +520,11 @@
                     }
                 }
             },
-            "errors": []
+            "errors": [
+                {
+                    "$ref": "#/components/errors/INVALID_MINT_INPUT"
+                }
+            ]
         }
     ],
     "components": {
@@ -910,6 +914,10 @@
             "INVALID_COLLECTION_INFO": {
                 "code": 3,
                 "message": "Given collection information is invalid"
+            },
+            "INVALID_MINT_INPUT": {
+                "code": 4,
+                "message": "Invalid mint operation information"
             }
         }
     }
