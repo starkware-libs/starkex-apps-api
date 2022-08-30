@@ -385,10 +385,159 @@
                 "name": "result",
                 "schema": true
             }
+        },
+        {
+            "name": "starkex_mint",
+            "description": "Mint a number of NFTs",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "The name for the NFT",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/DISPLAY_TEXT"
+                    }
+                },
+                {
+                    "name": "nft_type",
+                    "description": "The type of the NFT (contract type)",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "enum": [
+                            "ERC721",
+                            "ERC1155"
+                        ]
+                    }
+                },
+                {
+                    "name": "owner_key",
+                    "description": "The stark key of the owner of the NFT",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    }
+                },
+                {
+                    "name": "contract_address",
+                    "description": "The contract address for the NFT contract",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/ETH_ADDRESS"
+                    }
+                },
+                {
+                    "name": "collection_id",
+                    "description": "The id of the collection to assign the new NFT(s) to",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/COLLECTION_ID"
+                    }
+                },
+                {
+                    "name": "description",
+                    "description": "The description of the NFT",
+                    "schema": {
+                        "$ref": "#/components/schemas/DISPLAY_TEXT"
+                    }
+                },
+                {
+                    "name": "content",
+                    "description": "A link to content of the NFT; usually some kind of URL",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                {
+                    "name": "amount",
+                    "description": "How many NFTs to mint (defaults to 1)",
+                    "schema": {
+                        "type": "integer",
+                        "minimum": 1
+                    }
+                },
+                {
+                    "name": "metadata",
+                    "description": "Metadata values for the minted NFTs. Must match the collection metadata scheme",
+                    "schema": {
+                        "$ref": "#/components/schemas/METADATA_DICT"
+                    }
+                },
+                {
+                    "name": "keywords",
+                    "description": "Keywords for the minted NFT",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/KEYWORD"
+                        }
+                    }
+                },
+                {
+                    "name": "royalties",
+                    "description": "Royalties to distribute for the minted NFTs",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "recipient_key": {
+                                    "$ref": "#/components/schemas/STARK_KEY"
+                                },
+                                "recipient_vault_id": {
+                                    "$ref": "#/components/schemas/VAULT_ID"
+                                },
+                                "fee": {
+                                    "$ref": "#/components/schemas/FEE_LIMIT"
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "transaction_id": {
+                            "$ref": "#/components/schemas/TXN_ID"
+                        },
+                        "vault_id": {
+                            "$ref": "#/components/schemas/VAULT_ID"
+                        },
+                        "asset_type": {
+                            "$ref": "#/components/schemas/ASSET_TYPE"
+                        },
+                        "minting_blob": {
+                            "$ref": "#/components/schemas/MINTING_BLOB"
+                        },
+                        "asset_id": {
+                            "$ref": "#/components/schemas/ASSET_ID"
+                        }
+                    }
+                }
+            },
+            "errors": []
         }
     ],
     "components": {
         "schemas": {
+            "MINTING_BLOB": {
+                "type": "string",
+                "minLength": 1
+            },
+            "TXN_ID": {
+                "type": "integer",
+                "minimum": 0
+            },
+            "DISPLAY_TEXT": {
+                "description": "Text that is to be displayed to users",
+                "type": "string",
+                "pattern": "^[0-9a-zA-Z_-]*$"
+            },
             "FILTER": {
                 "oneOf": [
                     {
@@ -674,6 +823,10 @@
                 "description": "The asset id of for an NFT (ERC721) asset. 32 bytes with 5 MSB zeroed",
                 "type": "string",
                 "pattern": "^0x0[0-7]{1}[a-fA-F0-9]{62}$"
+            },
+            "ASSET_TYPE": {
+                "description": "The asset type. A uint256 value",
+                "$ref": "#/components/schemas/NUM_AS_HEX"
             },
             "MERKLE_PATH": {
                 "description": "A series of bytes denoting a path in a merkle tree. Bytes given as pairs of hex digits",
