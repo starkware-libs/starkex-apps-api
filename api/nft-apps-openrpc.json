@@ -391,109 +391,11 @@
             "description": "Mint a number of NFTs",
             "params": [
                 {
-                    "name": "name",
-                    "description": "The name for the NFT",
+                    "name": "mint_info",
+                    "description": "The information for the mint operation",
                     "required": true,
                     "schema": {
-                        "$ref": "#/components/schemas/DISPLAY_TEXT"
-                    }
-                },
-                {
-                    "name": "nft_type",
-                    "description": "The type of the NFT (contract type)",
-                    "required": true,
-                    "schema": {
-                        "type": "string",
-                        "enum": [
-                            "ERC721",
-                            "ERC1155"
-                        ]
-                    }
-                },
-                {
-                    "name": "owner_key",
-                    "description": "The stark key of the owner of the NFT",
-                    "required": true,
-                    "schema": {
-                        "$ref": "#/components/schemas/STARK_KEY"
-                    }
-                },
-                {
-                    "name": "contract_address",
-                    "description": "The contract address for the NFT contract",
-                    "required": true,
-                    "schema": {
-                        "$ref": "#/components/schemas/ETH_ADDRESS"
-                    }
-                },
-                {
-                    "name": "collection_id",
-                    "description": "The id of the collection to assign the new NFT(s) to",
-                    "required": true,
-                    "schema": {
-                        "$ref": "#/components/schemas/COLLECTION_ID"
-                    }
-                },
-                {
-                    "name": "description",
-                    "description": "The description of the NFT",
-                    "schema": {
-                        "$ref": "#/components/schemas/DISPLAY_TEXT"
-                    }
-                },
-                {
-                    "name": "content",
-                    "description": "A link to content of the NFT; usually some kind of URL",
-                    "required": true,
-                    "schema": {
-                        "type": "string",
-                        "minLength": 1
-                    }
-                },
-                {
-                    "name": "amount",
-                    "description": "How many NFTs to mint (defaults to 1)",
-                    "schema": {
-                        "type": "integer",
-                        "minimum": 1
-                    }
-                },
-                {
-                    "name": "metadata",
-                    "description": "Metadata values for the minted NFTs. Must match the collection metadata scheme",
-                    "schema": {
-                        "$ref": "#/components/schemas/METADATA_DICT"
-                    }
-                },
-                {
-                    "name": "keywords",
-                    "description": "Keywords for the minted NFT",
-                    "schema": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/KEYWORD"
-                        }
-                    }
-                },
-                {
-                    "name": "royalties",
-                    "description": "Royalties to distribute for the minted NFTs",
-                    "schema": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "recipient_key": {
-                                    "$ref": "#/components/schemas/STARK_KEY"
-                                },
-                                "recipient_vault_id": {
-                                    "$ref": "#/components/schemas/VAULT_ID"
-                                },
-                                "fee": {
-                                    "$ref": "#/components/schemas/FEE_LIMIT"
-                                }
-                            }
-                        }
+                        "$ref": "#/components/schemas/MINT_OPERATION_INFO"
                     }
                 }
             ],
@@ -555,10 +457,142 @@
                     "$ref": "#/components/errors/TRANSACTION_NOT_FOUND"
                 }
             ]
+        },
+        {
+            "name": "starkex_getMintHistoryForUser",
+            "description": "For the given user key, retrieve the mint operations where it is the owner",
+            "params": [
+                {
+                    "name": "owner_key",
+                    "required": true,
+                    "description": "The stark key of the owner for the minted NFTs (for which they were minted)",
+                    "schema": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    }
+                },
+                {
+                    "name": "page_request",
+                    "description": "The information required to return a specific page of results",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/RESULT_PAGE_REQUEST"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "mint_ops": {
+                            "type": "array",
+                            "items": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/MINT_OPERATION_INFO"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "transaction_id": {
+                                                "$ref": "#/components/schemas/TXN_ID"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        "continuation_token": {
+                            "description": "A pointer to the last element of the delivered page, can be used to sent with subsequent queries to more pages",
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     ],
     "components": {
         "schemas": {
+            "MINT_OPERATION_INFO": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "nft_type",
+                    "owner_key",
+                    "contract_address",
+                    "collection_id",
+                    "content"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "The name for the NFT",
+                        "$ref": "#/components/schemas/DISPLAY_TEXT"
+                    },
+                    "nft_type": {
+                        "description": "The type of the NFT (contract type)",
+                        "type": "string",
+                        "enum": [
+                            "ERC721",
+                            "ERC1155"
+                        ]
+                    },
+                    "owner_key": {
+                        "description": "The stark key of the owner of the NFT",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "contract_address": {
+                        "description": "The contract address for the NFT contract",
+                        "$ref": "#/components/schemas/ETH_ADDRESS"
+                    },
+                    "collection_id": {
+                        "description": "The id of the collection to assign the new NFT(s) to",
+                        "$ref": "#/components/schemas/COLLECTION_ID"
+                    },
+                    "content": {
+                        "description": "A link to content of the NFT; usually some kind of URL",
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "description": {
+                        "description": "The description of the NFT",
+                        "$ref": "#/components/schemas/DISPLAY_TEXT"
+                    },
+                    "amount": {
+                        "description": "How many NFTs to mint (defaults to 1)",
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "metadata": {
+                        "description": "Metadata values for the minted NFTs. Must match the collection metadata scheme",
+                        "$ref": "#/components/schemas/METADATA_DICT"
+                    },
+                    "keywords": {
+                        "description": "Keywords for the minted NFT",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/KEYWORD"
+                        }
+                    },
+                    "royalties": {
+                        "description": "Royalties to distribute for the minted NFTs",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "recipient_key": {
+                                    "$ref": "#/components/schemas/STARK_KEY"
+                                },
+                                "recipient_vault_id": {
+                                    "$ref": "#/components/schemas/VAULT_ID"
+                                },
+                                "fee": {
+                                    "$ref": "#/components/schemas/FEE_LIMIT"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "MINTING_BLOB": {
                 "type": "string",
                 "minLength": 1
