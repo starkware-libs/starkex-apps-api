@@ -525,6 +525,36 @@
                     "$ref": "#/components/errors/INVALID_MINT_INPUT"
                 }
             ]
+        },
+        {
+            "name": "starkext_getMintStatus",
+            "description": "Get the status of a mint transaction",
+            "params": [
+                {
+                    "name": "transaction_id",
+                    "description": "The id of the sent mint transaction",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/TXN_ID"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "SUCCESS",
+                        "FAILURE",
+                        "PENDING"
+                    ]
+                }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/TRANSACTION_NOT_FOUND"
+                }
+            ]
         }
     ],
     "components": {
@@ -918,6 +948,10 @@
             "INVALID_MINT_INPUT": {
                 "code": 4,
                 "message": "Invalid mint operation information"
+            },
+            "TRANSACTION_NOT_FOUND": {
+                "code": 5,
+                "message": "The requested transaction was not found"
             }
         }
     }
