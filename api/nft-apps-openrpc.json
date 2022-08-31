@@ -609,8 +609,7 @@
             },
             "DISPLAY_TEXT": {
                 "description": "Text that is to be displayed to users",
-                "type": "string",
-                "pattern": "^[0-9a-zA-Z_-]*$"
+                "type": "string"
             },
             "FILTER": {
                 "oneOf": [
