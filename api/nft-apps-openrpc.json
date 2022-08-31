@@ -36,7 +36,7 @@
             }
         },
         {
-            "name": "starkex_getAsset",
+            "name": "starkex_getAssetInfo",
             "description": "Given an asset id retrieve all the asset information",
             "params": [
                 {
@@ -260,9 +260,34 @@
                 }
             ],
             "result": {
+                "name": "order_id",
+                "schema": {
+                    "$ref": "#/components/schemas/ORDER_ID"
+                }
+            }
+        },
+        {
+            "name": "starkex_cancelOrder",
+            "description": "Cancel an order that was already submitted",
+            "params": [
+                {
+                    "name": "order_id",
+                    "description": "The id of the order to cancel",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/components/schemas/ORDER_ID"
+                    }
+                }
+            ],
+            "result": {
                 "name": "result",
                 "schema": true
-            }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/ORDER_NOT_FOUND"
+                }
+            ]
         },
         {
             "name": "starkex_getOpenOrdersByFilter",
@@ -296,7 +321,7 @@
                         "orders": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/ORDER"
+                                "$ref": "#/components/schemas/ORDER_WITH_ID"
                             }
                         },
                         "continuation_token": {
@@ -342,7 +367,7 @@
                                 "type": "object",
                                 "properties": {
                                     "order": {
-                                        "$ref": "#/components/schemas/ORDER"
+                                        "$ref": "#/components/schemas/ORDER_WITH_ID"
                                     },
                                     "status": {
                                         "type": "string",
@@ -382,8 +407,11 @@
                 }
             ],
             "result": {
-                "name": "result",
-                "schema": true
+                "name": "transaction_id",
+                "description": "The transaction id of the created settlement transaction",
+                "schema": {
+                    "$ref": "#/components/schemas/TXN_ID"
+                }
             }
         },
         {
@@ -511,6 +539,10 @@
     ],
     "components": {
         "schemas": {
+            "ORDER_ID": {
+                "type": "integer",
+                "minimum": 0
+            },
             "TXN_STATUS": {
                 "type": "string",
                 "enum": [
@@ -713,6 +745,16 @@
                         "$ref": "#/components/schemas/FEE_LIMIT"
                     }
                 }
+            },
+            "ORDER_WITH_ID": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/ORDER"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ORDER_ID"
+                    }
+                ]
             },
             "VAULT_ID": {
                 "description": "A vault id, represented as a hex number",
@@ -991,6 +1033,10 @@
             "TRANSACTION_NOT_FOUND": {
                 "code": 5,
                 "message": "The requested transaction was not found"
+            },
+            "ORDER_NOT_FOUND": {
+                "code": 6,
+                "message": "The requested order was not found"
             }
         }
     }
