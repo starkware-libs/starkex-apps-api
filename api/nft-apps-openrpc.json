@@ -568,9 +568,9 @@
                         "type": "integer",
                         "minimum": 1
                     },
-                    "metadata": {
-                        "description": "Metadata values for the minted NFTs. Must match the collection metadata scheme",
-                        "$ref": "#/components/schemas/METADATA_DICT"
+                    "metadata_uri": {
+                        "description": "A pointer to further metadata",
+                        "type": "string"
                     },
                     "keywords": {
                         "description": "Keywords for the minted NFT",
