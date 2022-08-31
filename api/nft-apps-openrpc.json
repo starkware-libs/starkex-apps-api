@@ -444,12 +444,7 @@
             "result": {
                 "name": "result",
                 "schema": {
-                    "type": "string",
-                    "enum": [
-                        "SUCCESS",
-                        "FAILURE",
-                        "PENDING"
-                    ]
+                    "$ref": "#/components/schemas/TXN_STATUS"
                 }
             },
             "errors": [
@@ -496,6 +491,9 @@
                                         "properties": {
                                             "transaction_id": {
                                                 "$ref": "#/components/schemas/TXN_ID"
+                                            },
+                                            "status": {
+                                                "$ref": "#/components/schemas/TXN_STATUS"
                                             }
                                         }
                                     }
@@ -513,6 +511,14 @@
     ],
     "components": {
         "schemas": {
+            "TXN_STATUS": {
+                "type": "string",
+                "enum": [
+                    "SUCCESS",
+                    "FAILURE",
+                    "PENDING"
+                ]
+            },
             "MINT_OPERATION_INFO": {
                 "type": "object",
                 "required": [
