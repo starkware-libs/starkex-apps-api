@@ -336,7 +336,7 @@
             }
         },
         {
-            "name": "starkex_getUserOrderHistory",
+            "name": "starkex_getUserHistory",
             "description": "For a given user, get the order history for that user",
             "params": [
                 {
@@ -364,22 +364,7 @@
                         "orders": {
                             "type": "array",
                             "items": {
-                                "type": "object",
-                                "properties": {
-                                    "order": {
-                                        "$ref": "#/components/schemas/ORDER_WITH_ID"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "enum": [
-                                            "OPEN",
-                                            "CLOSED",
-                                            "EXPIRED",
-                                            "SETTLED",
-                                            "CANCELLED"
-                                        ]
-                                    }
-                                }
+                                "$ref": "#/components/schemas/USER_HISTORY_ITEM"
                             }
                         },
                         "continuation_token": {
@@ -539,6 +524,84 @@
     ],
     "components": {
         "schemas": {
+            "USER_HISTORY_ITEM": {
+                "oneOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "order": {
+                                "$ref": "#/components/schemas/ORDER_WITH_ID"
+                            },
+                            "status": {
+                                "type": "string",
+                                "enum": [
+                                    "OPEN",
+                                    "CLOSED",
+                                    "EXPIRED",
+                                    "SETTLED",
+                                    "CANCELLED"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/SETTLEMENT_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TRANSFER"
+                    }
+                ]
+            },
+            "TRANSFER": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "description": "Amount transferred",
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "nonce": {
+                        "description": "The nonce used when signing the transaction",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "sender_key": {
+                        "description": "The key of the sending user",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "sender_vault_id": {
+                        "description": "The vault that is the source of the transfer",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "asset_id": {
+                        "description": "The id of the asset or token transferred",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "receiver_key": {
+                        "description": "The key of the receiving user",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "receiver_vault": {
+                        "description": "The target vault for the transfer",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "expiration_timestamp": {
+                        "description": "The expiration timestamp of the transfer transaction",
+                        "$ref": "#/components/schemas/EXPIRATION_TIMESTAMP"
+                    },
+                    "signature": {
+                        "description": "The transfer signature details",
+                        "$ref": "#/components/schemas/SIGNATURE"
+                    },
+                    "fee_requested": {
+                        "description": "The fee information for this transfer",
+                        "$ref": "#/components/schemas/FEE_LIMIT"
+                    },
+                    "fee_taken": {
+                        "description": "Information about the fee taken, and to which vault",
+                        "$ref": "#/components/schemas/FEE_LIMIT"
+                    }
+                }
+            },
             "ORDER_ID": {
                 "type": "integer",
                 "minimum": 0
@@ -704,6 +767,21 @@
                     }
                 }
             },
+            "SETTLEMENT_WITH_ID": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/SETTLEMENT"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "transaction_id": {
+                                "$ref": "#/components/schemas/TXN_ID"
+                            }
+                        }
+                    }
+                ]
+            },
             "ORDER": {
                 "type": "object",
                 "properties": {
@@ -729,10 +807,7 @@
                     },
                     "expiration_timestamp": {
                         "description": "The order expiration time",
-                        "type": "integer",
-                        "minimum": 0,
-                        "maximum": 4194303,
-                        "$comment": "upper limit is 2^22-1, taken from StarkEx code - ExpirationTimestampField"
+                        "$ref": "#/components/schemas/EXPIRATION_TIMESTAMP"
                     },
                     "nonce": {
                         "$ref": "#/components/schemas/NONCE"
@@ -746,13 +821,24 @@
                     }
                 }
             },
+            "EXPIRATION_TIMESTAMP": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4194303,
+                "$comment": "upper limit is 2^22-1, taken from StarkEx code - ExpirationTimestampField"
+            },
             "ORDER_WITH_ID": {
                 "allOf": [
                     {
                         "$ref": "#/components/schemas/ORDER"
                     },
                     {
-                        "$ref": "#/components/schemas/ORDER_ID"
+                        "type": "object",
+                        "properties": {
+                            "order_id": {
+                                "$ref": "#/components/schemas/ORDER_ID"
+                            }
+                        }
                     }
                 ]
             },
@@ -984,12 +1070,12 @@
                         "description": "The token id of the fee",
                         "$ref": "#/components/schemas/TOKEN_ID"
                     },
-                    "source_vault_id": {
-                        "description": "The id of the vault from which the fee can be taken",
+                    "vault_id": {
+                        "description": "The id of the source/target vault",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
                     "fee_limit": {
-                        "description": "The fee limit, proportional to the signed buy/sell amount",
+                        "description": "The fee limit",
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 9223372036854775808,
