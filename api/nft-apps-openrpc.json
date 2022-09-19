@@ -3,7 +3,7 @@
     "info": {
         "title": "StarkEx NFT Application API",
         "description": "A specification of a standard interface for NFT applications using StarkEx",
-        "version": "0.1.0"
+        "version": "0.2.0"
     },
     "methods": [
         {
@@ -69,7 +69,7 @@
                     "description": "The filter used to choose the assets to return",
                     "required": true,
                     "schema": {
-                        "$ref": "#/components/schemas/FILTER"
+                        "$ref": "#/components/schemas/ASSET_FILTER"
                     }
                 },
                 {
@@ -724,6 +724,31 @@
                         "properties": {
                             "attributes": {
                                 "$ref": "#/components/schemas/METADATA_DICT"
+                            }
+                        }
+                    }
+                ]
+            },
+            "ASSET_FILTER": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/FILTER"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "collection_id": {
+                                "description": "The collection id that contains the assets to retrieve",
+                                "$ref": "#/components/schemas/COLLECTION_ID"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "contract_address": {
+                                "description": "The address of the L1 contracts that minted the assets to retrieve",
+                                "$ref": "#/components/schemas/ETH_ADDRESS"
                             }
                         }
                     }
