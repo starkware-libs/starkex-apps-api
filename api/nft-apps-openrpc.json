@@ -89,7 +89,7 @@
                         "assets": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/NFT_ASSET"
+                                "$ref": "#/components/schemas/ASSET_WITH_TXN_HISTORY"
                             }
                         },
                         "continuation_token": {
@@ -524,6 +524,19 @@
     ],
     "components": {
         "schemas": {
+            "ASSET_HISTORY_ITEM": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/MINT_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SETTLEMENT_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TRANSFER_WITH_ID"
+                    }
+                ]
+            },
             "USER_HISTORY_ITEM": {
                 "oneOf": [
                     {
@@ -601,6 +614,21 @@
                         "$ref": "#/components/schemas/FEE_LIMIT"
                     }
                 }
+            },
+            "TRANSFER_WITH_ID": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/TRANSFER"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "transaction_id": {
+                                "$ref": "#/components/schemas/TXN_ID"
+                            }
+                        }
+                    }
+                ]
             },
             "ORDER_ID": {
                 "type": "integer",
@@ -693,6 +721,21 @@
                         }
                     }
                 }
+            },
+            "MINT_WITH_ID": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/MINT_OPERATION_INFO"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "transaction_id": {
+                                "$ref": "#/components/schemas/TXN_ID"
+                            }
+                        }
+                    }
+                ]
             },
             "MINTING_BLOB": {
                 "type": "string",
@@ -946,6 +989,24 @@
                 },
                 "required": [
                     "chunk_size"
+                ]
+            },
+            "ASSET_WITH_TXN_HISTORY": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/NFT_ASSET"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "history": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ASSET_HISTORY_ITEM"
+                                }
+                            }
+                        }
+                    }
                 ]
             },
             "NFT_ASSET": {
