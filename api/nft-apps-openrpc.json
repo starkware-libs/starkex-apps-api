@@ -320,6 +320,7 @@
                     "properties": {
                         "orders": {
                             "type": "array",
+                            "description": "All the open orders for assets that have one of the input keywords, or belong to a collection that has one of these keywords",
                             "items": {
                                 "$ref": "#/components/schemas/ORDER_WITH_ID"
                             }
