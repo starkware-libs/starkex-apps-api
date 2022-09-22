@@ -822,10 +822,56 @@
                     }
                 ]
             },
+            "FEE_INFO": {
+                "description": "Information about the fee collected",
+                "type": "object",
+                "properties": {
+                    "amount_taken": {
+                        "description": "Actual amount of fee taken",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "destination_vault_id": {
+                        "description": "The vault to which the fee was transferred",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "destination_stark_key": {
+                        "description": "The stark key for the destination vault",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    }
+                }
+            },
+            "SETTLEMENT_INFO": {
+                "description": "An object describing the settlement itself - how much was transferred, and fees collected",
+                "type": "object",
+                "properties": {
+                    "party_a_amount": {
+                        "description": "Amount of assets transferred from A to B",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "party_b_amount": {
+                        "description": "Amount of assets transferred from B to A",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "a_fee": {
+                        "description": "Exchange fee for party A",
+                        "$ref": "#/components/schemas/FEE_INFO"
+                    },
+                    "b_fee": {
+                        "description": "Exchange fee for party B",
+                        "$ref": "#/components/schemas/FEE_INFO"
+                    }
+                }
+            },
             "SETTLEMENT": {
                 "description": "A settlement of 2 orders (buy+sell) for NFTs",
                 "type": "object",
                 "properties": {
+                    "settlement_info": {
+                        "$ref": "#/components/schemas/SETTLEMENT_INFO"
+                    },
                     "buy_order": {
                         "$comment": "type of order must be BUY",
                         "allOf": [
