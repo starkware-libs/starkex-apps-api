@@ -782,6 +782,18 @@
                                 "$ref": "#/components/schemas/METADATA_DICT"
                             }
                         }
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "names": {
+                                "type": "array",
+                                "description": "A list of collection names to look for. Matching for substrings, case insensitive.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
                     }
                 ]
             },
