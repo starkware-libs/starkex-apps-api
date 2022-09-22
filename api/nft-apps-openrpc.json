@@ -374,7 +374,7 @@
                 "schema": {
                     "type": "object",
                     "properties": {
-                        "orders": {
+                        "items": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/USER_HISTORY_ITEM"
@@ -386,7 +386,7 @@
                         }
                     },
                     "required": [
-                        "orders"
+                        "items"
                     ]
                 }
             }
