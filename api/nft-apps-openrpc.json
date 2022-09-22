@@ -1051,6 +1051,10 @@
                     "asset_info": {
                         "$ref": "#/components/schemas/ASSET_INFO"
                     },
+                    "minting_blob": {
+                        "description": "For an NFT, the blob included in the asset id hash",
+                        "type": "string"
+                    },
                     "content": {
                         "description": "The content of the NFT (or link to it)",
                         "type": "string"
