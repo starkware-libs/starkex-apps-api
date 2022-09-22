@@ -885,16 +885,29 @@
                             "SELL"
                         ]
                     },
-                    "vault_id": {
-                        "description": "The vault id holding the bought/sold NFT",
+                    "party_a_vault_id": {
+                        "description": "The vault id for the first party in the order",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
-                    "asset_id": {
-                        "description": "The asset id to buy/sell",
+                    "party_a_asset_id": {
+                        "description": "The 1st asset id to buy/sell",
                         "$ref": "#/components/schemas/ASSET_ID"
                     },
-                    "amount": {
-                        "description": "The amount to sell/buy",
+                    "party_a_amount": {
+                        "description": "The 1st amount to sell/buy",
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "party_b_vault_id": {
+                        "description": "The vault id for the second party in the order",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "party_b_asset_id": {
+                        "description": "The 2nd asset id to buy/sell",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "party_b_amount": {
+                        "description": "The 2nd amount to sell/buy",
                         "type": "integer",
                         "minimum": 1
                     },
