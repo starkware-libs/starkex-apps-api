@@ -17,6 +17,14 @@
                     "schema": {
                         "$ref": "#/components/schemas/STARK_KEY"
                     }
+                },
+                {
+                    "name": "page_request",
+                    "description": "The information required to return a specific page of results",
+                    "required": false,
+                    "schema": {
+                        "$ref": "#/components/schemas/RESULT_PAGE_REQUEST"
+                    }
                 }
             ],
             "result": {
@@ -30,6 +38,10 @@
                             "items": {
                                 "$ref": "#/components/schemas/NFT_ASSET"
                             }
+                        },
+                        "continuation_token": {
+                            "description": "A pointer to the last element of the delivered page, can be used to sent with subsequent queries to more pages",
+                            "type": "string"
                         }
                     }
                 }
@@ -362,7 +374,7 @@
                 "schema": {
                     "type": "object",
                     "properties": {
-                        "orders": {
+                        "items": {
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/USER_HISTORY_ITEM"
@@ -374,7 +386,7 @@
                         }
                     },
                     "required": [
-                        "orders"
+                        "items"
                     ]
                 }
             }
@@ -394,7 +406,7 @@
             ],
             "result": {
                 "name": "transaction_id",
-                "description": "The transaction id of the created settlement transaction",
+                "description": "The transaction id of the created settlement transaction. This is the starkex transaction id.",
                 "schema": {
                     "$ref": "#/components/schemas/TXN_ID"
                 }
@@ -770,6 +782,18 @@
                                 "$ref": "#/components/schemas/METADATA_DICT"
                             }
                         }
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "names": {
+                                "type": "array",
+                                "description": "A list of collection names to look for. Matching for substrings, case insensitive.",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
                     }
                 ]
             },
@@ -798,10 +822,56 @@
                     }
                 ]
             },
+            "FEE_INFO": {
+                "description": "Information about the fee collected",
+                "type": "object",
+                "properties": {
+                    "amount_taken": {
+                        "description": "Actual amount of fee taken",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "destination_vault_id": {
+                        "description": "The vault to which the fee was transferred",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "destination_stark_key": {
+                        "description": "The stark key for the destination vault",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    }
+                }
+            },
+            "SETTLEMENT_INFO": {
+                "description": "An object describing the settlement itself - how much was transferred, and fees collected",
+                "type": "object",
+                "properties": {
+                    "party_a_amount": {
+                        "description": "Amount of assets transferred from A to B",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "party_b_amount": {
+                        "description": "Amount of assets transferred from B to A",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "a_fee": {
+                        "description": "Exchange fee for party A",
+                        "$ref": "#/components/schemas/FEE_INFO"
+                    },
+                    "b_fee": {
+                        "description": "Exchange fee for party B",
+                        "$ref": "#/components/schemas/FEE_INFO"
+                    }
+                }
+            },
             "SETTLEMENT": {
                 "description": "A settlement of 2 orders (buy+sell) for NFTs",
                 "type": "object",
                 "properties": {
+                    "settlement_info": {
+                        "$ref": "#/components/schemas/SETTLEMENT_INFO"
+                    },
                     "buy_order": {
                         "$comment": "type of order must be BUY",
                         "allOf": [
@@ -861,16 +931,29 @@
                             "SELL"
                         ]
                     },
-                    "vault_id": {
-                        "description": "The vault id holding the bought/sold NFT",
+                    "party_a_vault_id": {
+                        "description": "The vault id for the first party in the order",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
-                    "asset_id": {
-                        "description": "The asset id to buy/sell",
+                    "party_a_asset_id": {
+                        "description": "The 1st asset id to buy/sell",
                         "$ref": "#/components/schemas/ASSET_ID"
                     },
-                    "amount": {
-                        "description": "The amount to sell/buy",
+                    "party_a_amount": {
+                        "description": "The 1st amount to sell/buy",
+                        "type": "integer",
+                        "minimum": 1
+                    },
+                    "party_b_vault_id": {
+                        "description": "The vault id for the second party in the order",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "party_b_asset_id": {
+                        "description": "The 2nd asset id to buy/sell",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "party_b_amount": {
+                        "description": "The 2nd amount to sell/buy",
                         "type": "integer",
                         "minimum": 1
                     },
@@ -1038,6 +1121,10 @@
                     },
                     "asset_info": {
                         "$ref": "#/components/schemas/ASSET_INFO"
+                    },
+                    "minting_blob": {
+                        "description": "For an NFT, the blob included in the asset id hash",
+                        "type": "string"
                     },
                     "content": {
                         "description": "The content of the NFT (or link to it)",
