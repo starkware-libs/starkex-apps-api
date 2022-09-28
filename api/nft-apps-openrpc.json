@@ -406,7 +406,7 @@
             ],
             "result": {
                 "name": "transaction_id",
-                "description": "The transaction id of the created settlement transaction",
+                "description": "The transaction id of the created settlement transaction. This is the starkex transaction id.",
                 "schema": {
                     "$ref": "#/components/schemas/TXN_ID"
                 }
