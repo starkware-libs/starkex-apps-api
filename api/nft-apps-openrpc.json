@@ -533,10 +533,88 @@
                     }
                 }
             }
+        },
+        {
+            "name": "starkex_subscribe",
+            "description": "Subscribe to a stream of events",
+            "params": [
+                {
+                    "name": "event_types",
+                    "required": true,
+                    "description": "The events the client wishes to listen to",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EVENT_TYPE"
+                        }
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "description": "The subscription id",
+                "schema": {
+                    "type": "string"
+                }
+            }
+        },
+        {
+            "name": "starkex_unsubscribe",
+            "description": "Unsubscribe from a given event stream",
+            "params": [
+                {
+                    "name": "subscription_id",
+                    "description": "The subscription id, as returned from the subscribe method",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "boolean",
+                    "description": "Returns true if the subscription was cancelled successfully"
+                }
+            }
         }
     ],
     "components": {
         "schemas": {
+            "EVENT_TYPE": {
+                "type": "string",
+                "enum": [
+                    "transfer",
+                    "settlement",
+                    "mint"
+                ]
+            },
+            "STARKEX_EVENT": {
+                "type": "object",
+                "properties": {
+                    "time": {
+                        "type": "number",
+                        "description": "A UTC timestamp for when the event occurred in StarkEx"
+                    },
+                    "event_type": {
+                        "$ref": "#/components/schemas/EVENT_TYPE"
+                    },
+                    "event": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/TRANSFER_WITH_ID"
+                            },
+                            {
+                                "$ref": "#/components/schemas/SETTLEMENT_WITH_ID"
+                            },
+                            {
+                                "$ref": "#/components/schemas/MINT_WITH_ID"
+                            }
+                        ]
+                    }
+                }
+            },
             "ASSET_HISTORY_ITEM": {
                 "oneOf": [
                     {
