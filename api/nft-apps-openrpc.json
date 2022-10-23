@@ -556,7 +556,12 @@
                 "schema": {
                     "type": "string"
                 }
-            }
+            },
+            "errors" : [
+                {
+                    "$ref" : "#/components/errors/SUBSCRIPTION_UNSUCCESSFUL"
+                }
+            ]
         },
         {
             "name": "starkex_unsubscribe",
@@ -1375,6 +1380,10 @@
             "ORDER_NOT_FOUND": {
                 "code": 6,
                 "message": "The requested order was not found"
+            },
+            "SUBSCRIPTION_UNSUCCESSFUL" : {
+                "code" : 7,
+                "message" : "Unable to establish subscription"
             }
         }
     }
