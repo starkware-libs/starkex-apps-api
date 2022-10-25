@@ -539,13 +539,13 @@
             "description": "Subscribe to a stream of events",
             "params": [
                 {
-                    "name": "event_types",
+                    "name": "transaction_types",
                     "required": true,
                     "description": "The events the client wishes to listen to",
                     "schema": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/EVENT_TYPE"
+                            "$ref": "#/components/schemas/TXN_TYPE"
                         }
                     }
                 }
@@ -557,9 +557,9 @@
                     "type": "string"
                 }
             },
-            "errors" : [
+            "errors": [
                 {
-                    "$ref" : "#/components/errors/SUBSCRIPTION_UNSUCCESSFUL"
+                    "$ref": "#/components/errors/SUBSCRIPTION_UNSUCCESSFUL"
                 }
             ]
         },
@@ -587,12 +587,21 @@
     ],
     "components": {
         "schemas": {
-            "EVENT_TYPE": {
+            "TXN_TYPE": {
                 "type": "string",
                 "enum": [
-                    "transfer",
-                    "settlement",
-                    "mint"
+                    "TRANSFER",
+                    "SETTLEMENT",
+                    "MINT"
+                ]
+            },
+            "PROCESSING_STATUS": {
+                "type": "string",
+                "enum": [
+                    "RECEIVED",
+                    "PROCESSING",
+                    "ACCEPTED",
+                    "REJECTED"
                 ]
             },
             "STARKEX_EVENT": {
@@ -602,10 +611,13 @@
                         "type": "number",
                         "description": "A UTC timestamp for when the event occurred in StarkEx"
                     },
-                    "event_type": {
-                        "$ref": "#/components/schemas/EVENT_TYPE"
+                    "transaction_type": {
+                        "$ref": "#/components/schemas/TXN_TYPE"
                     },
-                    "event": {
+                    "status": {
+                        "$ref": "#/components/schemas/PROCESSING_STATUS"
+                    },
+                    "transaction": {
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/TRANSFER_WITH_ID"
@@ -1381,9 +1393,9 @@
                 "code": 6,
                 "message": "The requested order was not found"
             },
-            "SUBSCRIPTION_UNSUCCESSFUL" : {
-                "code" : 7,
-                "message" : "Unable to establish subscription"
+            "SUBSCRIPTION_UNSUCCESSFUL": {
+                "code": 7,
+                "message": "Unable to establish subscription"
             }
         }
     }
