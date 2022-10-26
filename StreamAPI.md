@@ -54,6 +54,14 @@ When a subscriber wishes to stop receiving such notifications, it should send th
 The schema is of JSON RPC notifications with the relevant transaction objects as defined in the API. In addition, a timestamp must be provided for each event.
 The schema is defined in the `STARKEX_EVENT` in [the API](./api/nft-apps-openrpc.json).
 
+Each event includes a timestamp and a status (`PROCESSING_STATUS` - received/processing/accepted/rejected).
+The timestamp represents the point in time the relevant status is applicable in StarkEx:
+1. `RECEIVED`: when the transaction was received in the StarkEx system.
+2. `PROCESSING`: the transaction is batched.
+3. `ACCEPTED`: the transaction is proven and the proof is accepted on L1.
+4. `REJECTED`: the transaction was rejected in StarkEx, at some point in the flow.
+
+A separate event should be emitted for each combination of transaction and its status. For example, a succesful transaction will effectively have 3 events emitted - 1 for `RECEIVED`, 1 for `PROCESSING` and 1 for `ACCEPTED`.
 
 ## Other Considerations
 
