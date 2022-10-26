@@ -31,7 +31,12 @@ Specifically, a subscription is done using the `starkex_subscribe` method:
 }
 
 ```
-The `event_types` indicate the type of transactions the subscriber would like to receive. Accepted values are defined in the `EVENT_TYPE` enumeration.
+The `requested_transaction_types` parameter indicates the type of transactions the subscriber would like to receive. Accepted values are defined in the `EVENT_TYPE` enumeration. This is a disjunction (OR) of the values - all of these transaction types will be emitted.
+Similarly, the `requested_statuses` parameter indicates the transaction statuses that will be transmitted on this subscription (again, a disjunction). Accepted values are defined in the `PROCESSING_STATUS` enumeration.
+
+Events that have a transaction type or a processing status that doesn't appear in this parameter will not be emitted.
+
+Leaving out both of these parameters means _all events_ should be transmitted.
 
 The response is simply the connection id (usually a number but can be any unique string):
 

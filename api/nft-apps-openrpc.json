@@ -539,13 +539,24 @@
             "description": "Subscribe to a stream of events",
             "params": [
                 {
-                    "name": "transaction_types",
-                    "required": true,
+                    "name": "requested_transaction_types",
+                    "required": false,
                     "description": "The events the client wishes to listen to",
                     "schema": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/TXN_TYPE"
+                        }
+                    }
+                },
+                {
+                    "name": "requested_statuses",
+                    "required": false,
+                    "description": "The transaction statuses the client would like to listen to",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PROCESSING_STATUS"
                         }
                     }
                 }
