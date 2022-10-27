@@ -605,7 +605,8 @@
                     "SETTLEMENT",
                     "MINT",
                     "DEPOSIT",
-                    "WITHDRAW"
+                    "WITHDRAW",
+                    "COND_TRANSFER"
                 ]
             },
             "PROCESSING_STATUS": {
@@ -646,6 +647,49 @@
                     }
                 }
             },
+            "COND_TRANSFER": {
+                "description": "A conditional transfer transaction",
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "description": "Amount transferred",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "nonce": {
+                        "description": "The nonce used when signing the transaction",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "sender_key": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "sender_vault_id": {
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "token": {
+                        "$ref": "#/components/schemas/TOKEN_ID"
+                    },
+                    "receiver_key": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "receiver_vault_id": {
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "fact_registry_address": {
+                        "description": "The address of the fact registry smart contract",
+                        "$ref": "#/components/schemas/ETH_ADDRESS"
+                    },
+                    "fact": {
+                        "description": "The fact that should appear in the fact registry as a condition to the transfer",
+                        "$comment": "A 32 byte blob, as 64 hex digits",
+                        "type": "string",
+                        "pattern": "^0x[a-fA-F0-9]{64}$"
+                    },
+                    "transaction_id": {
+                        "$ref": "#/components/schemas/TXN_ID"
+                    }
+                }
+            },
             "STARKEX_EVENT": {
                 "type": "object",
                 "properties": {
@@ -672,6 +716,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/DEPOSIT_OR_WITHDRAW"
+                            },
+                            {
+                                "$ref": "#/components/schemas/COND_TRANSFER"
                             }
                         ]
                     }
@@ -724,7 +771,7 @@
                     "amount": {
                         "description": "Amount transferred",
                         "type": "integer",
-                        "minimum": 1
+                        "minimum": 0
                     },
                     "nonce": {
                         "description": "The nonce used when signing the transaction",
