@@ -603,7 +603,9 @@
                 "enum": [
                     "TRANSFER",
                     "SETTLEMENT",
-                    "MINT"
+                    "MINT",
+                    "DEPOSIT",
+                    "WITHDRAW"
                 ]
             },
             "PROCESSING_STATUS": {
@@ -614,6 +616,35 @@
                     "ACCEPTED",
                     "REJECTED"
                 ]
+            },
+            "DEPOSIT_OR_WITHDRAW": {
+                "type": "object",
+                "properties": {
+                    "txn_type": {
+                        "type": "string",
+                        "$comment": "accepted values are DEPOSIT/WITHDRAW, like in TXN_TYPE. It's in the event, but also here so the object is self-contained",
+                        "enum": [
+                            "DEPOSIT",
+                            "WITHDRAW"
+                        ]
+                    },
+                    "vault_id": {
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "user_key": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "asset_type": {
+                        "$ref": "#/components/schemas/ASSET_TYPE"
+                    },
+                    "amount": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "transaction_id": {
+                        "$ref": "#/components/schemas/TXN_ID"
+                    }
+                }
             },
             "STARKEX_EVENT": {
                 "type": "object",
@@ -638,6 +669,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/MINT_WITH_ID"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DEPOSIT_OR_WITHDRAW"
                             }
                         ]
                     }
