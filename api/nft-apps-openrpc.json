@@ -606,7 +606,8 @@
                     "MINT",
                     "DEPOSIT",
                     "WITHDRAW",
-                    "COND_TRANSFER"
+                    "COND_TRANSFER",
+                    "FULL_WITHDRAWAL"
                 ]
             },
             "PROCESSING_STATUS": {
@@ -690,6 +691,19 @@
                     }
                 }
             },
+            "FULL_WITHDRAWAL": {
+                "type": "object",
+                "properties": {
+                    "vault_id": {
+                        "description": "The vault ID in StarkEx to withdraw from",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "user_key": {
+                        "description": "The key of the user withdrawing, as registered on the StarkEx contract",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    }
+                }
+            },
             "STARKEX_EVENT": {
                 "type": "object",
                 "properties": {
@@ -719,6 +733,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/COND_TRANSFER"
+                            },
+                            {
+                                "$ref": "#/components/schemas/FULL_WITHDRAWAL"
                             }
                         ]
                     }
