@@ -607,15 +607,23 @@
     "components": {
         "schemas": {
             "TXN_TYPE": {
-                "type": "string",
-                "enum": [
-                    "TRANSFER",
-                    "SETTLEMENT",
-                    "MINT",
-                    "DEPOSIT",
-                    "WITHDRAW",
-                    "COND_TRANSFER",
-                    "FULL_WITHDRAWAL"
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "enum": [
+                            "TRANSFER",
+                            "SETTLEMENT",
+                            "MINT",
+                            "DEPOSIT",
+                            "WITHDRAW",
+                            "COND_TRANSFER",
+                            "FULL_WITHDRAWAL"
+                        ]
+                    },
+                    {
+                        "$comment": "Allow future transaction types to be added and pass validation",
+                        "type": "string"
+                    }
                 ]
             },
             "PROCESSING_STATUS": {
@@ -726,6 +734,7 @@
                         "$ref": "#/components/schemas/PROCESSING_STATUS"
                     },
                     "transaction": {
+                        "$comment": "Future transaction types should extend one of these below, with additional properties allowed. The transaction type should indicate the semantic of the object and how the client should parse it",
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/TRANSFER_WITH_ID"
