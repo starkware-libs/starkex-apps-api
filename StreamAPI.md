@@ -55,6 +55,15 @@ In case of any error in establishing a connection, the operator should return th
 
 When a subscriber wishes to stop receiving such notifications, it should send the `starkex_unsubscibe` method with the subscription id received in the result of `starkex_subscribe`. The return value of `unsubscribe` indicates whether the cancellation was sucessful.
 
+### Past Events
+
+By default, when subscribing to an event stream, the operator (supplier of events) should transmit events from the point of the subscription forward, i.e. future events.
+
+It's possible for a subscriber to request past events, by supplying a `start_from` timestamp to the `starkex_subscribe` method. This timestamp should be in the past relative to the subscription time. The event supplier (operator), should start transmitting events from that point in the past forward. Of course, it should take the other filters (requested types and statuses) into account.
+The rate of transmitted messages is up to the operator.
+
+Also, it is up to the operator to limit the amount of past events it maintains and provides; so it's possible for an operator to limit the amount of events in the past it will provide in this way.
+
 ## Payload
 The schema is of JSON RPC notifications with the relevant transaction objects as defined in the API. In addition, a timestamp must be provided for each event.
 The schema is defined in the `STARKEX_EVENT` in [the API](./api/nft-apps-openrpc.json).

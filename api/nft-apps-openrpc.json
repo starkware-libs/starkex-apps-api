@@ -559,6 +559,14 @@
                             "$ref": "#/components/schemas/PROCESSING_STATUS"
                         }
                     }
+                },
+                {
+                    "name": "start_from",
+                    "required": false,
+                    "description": "The earliest timestamp for events to retrieve on the stream. A UTC timestamp, default to now.",
+                    "schema": {
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
                 }
             ],
             "result": {
@@ -708,8 +716,8 @@
                 "type": "object",
                 "properties": {
                     "time": {
-                        "type": "number",
-                        "description": "A UTC timestamp for when the event occurred in StarkEx"
+                        "description": "A UTC timestamp for when the event occurred in StarkEx",
+                        "$ref": "#/components/schemas/TIMESTAMP"
                     },
                     "transaction_type": {
                         "$ref": "#/components/schemas/TXN_TYPE"
@@ -1176,6 +1184,11 @@
                         "$ref": "#/components/schemas/FEE_LIMIT"
                     }
                 }
+            },
+            "TIMESTAMP": {
+                "description": "A UTC timestamp",
+                "type": "integer",
+                "minimum": 0
             },
             "EXPIRATION_TIMESTAMP": {
                 "type": "integer",
