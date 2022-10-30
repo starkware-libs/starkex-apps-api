@@ -720,6 +720,40 @@
                     }
                 }
             },
+            "MULTI_TRANSACTION": {
+                "type": "object",
+                "properties": {
+                    "transactions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SINGLE_TRANSACTION"
+                        }
+                    }
+                }
+            },
+            "SINGLE_TRANSACTION": {
+                "$comment": "Future transaction types should extend one of these below, with additional properties allowed. The transaction type should indicate the semantic of the object and how the client should parse it",
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/TRANSFER_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SETTLEMENT_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/MINT_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DEPOSIT_OR_WITHDRAW"
+                    },
+                    {
+                        "$ref": "#/components/schemas/COND_TRANSFER"
+                    },
+                    {
+                        "$ref": "#/components/schemas/FULL_WITHDRAWAL"
+                    }
+                ]
+            },
             "STARKEX_EVENT": {
                 "type": "object",
                 "properties": {
@@ -734,25 +768,12 @@
                         "$ref": "#/components/schemas/PROCESSING_STATUS"
                     },
                     "transaction": {
-                        "$comment": "Future transaction types should extend one of these below, with additional properties allowed. The transaction type should indicate the semantic of the object and how the client should parse it",
-                        "oneOf": [
+                        "anyOf": [
                             {
-                                "$ref": "#/components/schemas/TRANSFER_WITH_ID"
+                                "$ref": "#/components/schemas/SINGLE_TRANSACTION"
                             },
                             {
-                                "$ref": "#/components/schemas/SETTLEMENT_WITH_ID"
-                            },
-                            {
-                                "$ref": "#/components/schemas/MINT_WITH_ID"
-                            },
-                            {
-                                "$ref": "#/components/schemas/DEPOSIT_OR_WITHDRAW"
-                            },
-                            {
-                                "$ref": "#/components/schemas/COND_TRANSFER"
-                            },
-                            {
-                                "$ref": "#/components/schemas/FULL_WITHDRAWAL"
+                                "$ref": "#/components/schemas/MULTI_TRANSACTION"
                             }
                         ]
                     }
