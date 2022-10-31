@@ -84,12 +84,29 @@
                         "type": "string",
                         "enum": [
                             "DEPOSIT",
-                            "WITHDRAWAL"
+                            "WITHDRAWAL",
+                            "WITHDRAWAL_TO_ADDR"
                         ]
                     },
                     {
                         "$comment": "Allow future transaction types to be added and pass validation",
                         "type": "string"
+                    }
+                ]
+            },
+            "WITHDRAWAL_TO_ADDR_TXN": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/WITHDRAWAL_TXN"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "eth_address": {
+                                "description": "The Ethereum address to move the funds into",
+                                "$ref": "#/components/schemas/ETH_ADDRESS"
+                            }
+                        }
                     }
                 ]
             },
@@ -153,6 +170,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/WITHDRAWAL_TXN"
+                            },
+                            {
+                                "$ref": "#/components/schemas/WITHDRAWAL_TO_ADDR_TXN"
                             }
                         ]
                     }
@@ -208,6 +228,9 @@
             },
             "NONCE": {
                 "$ref": "./api/nft-apps-openrpc.json#components/schemas/NONCE"
+            },
+            "ETH_ADDRESS": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/ETH_ADDRESS"
             }
         },
         "errors": {
