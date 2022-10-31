@@ -85,7 +85,8 @@
                         "enum": [
                             "DEPOSIT",
                             "WITHDRAWAL",
-                            "WITHDRAWAL_TO_ADDR"
+                            "WITHDRAWAL_TO_ADDR",
+                            "FORCED_WITHDRAWAL"
                         ]
                     },
                     {
@@ -93,6 +94,29 @@
                         "type": "string"
                     }
                 ]
+            },
+            "FORCED_WITHDRAWAL_TXN": {
+                "type": "object",
+                "properties": {
+                    "position_id": {
+                        "description": "The position ID to withdraw from",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "public_key": {
+                        "description": "The position ID owner's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "amount": {
+                        "description": "Amount to withdraw",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "is_valid": {
+                        "description": "A flag that specifies the validity of the forced action",
+                        "type": "boolean"
+                    }
+                }
             },
             "WITHDRAWAL_TO_ADDR_TXN": {
                 "allOf": [
@@ -173,6 +197,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/WITHDRAWAL_TO_ADDR_TXN"
+                            },
+                            {
+                                "$ref": "#/components/schemas/FORCED_WITHDRAWAL_TXN"
                             }
                         ]
                     }
