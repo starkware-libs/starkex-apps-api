@@ -1,0 +1,175 @@
+{
+    "openrpc": "1.2.4",
+    "info": {
+        "title": "StarkEx Perpetual Application API",
+        "description": "A specification of a standard interface for applications using StarkEx Perpetual",
+        "version": "0.1.0"
+    },
+    "methods": [
+        {
+            "name": "starkex_subscribe",
+            "description": "Subscribe to a stream of events",
+            "params": [
+                {
+                    "name": "requested_transaction_types",
+                    "required": false,
+                    "description": "The events the client wishes to listen to",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TXN_TYPE"
+                        }
+                    }
+                },
+                {
+                    "name": "requested_statuses",
+                    "required": false,
+                    "description": "The transaction statuses the client would like to listen to",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PROCESSING_STATUS"
+                        }
+                    }
+                },
+                {
+                    "name": "start_from",
+                    "required": false,
+                    "description": "The earliest timestamp for events to retrieve on the stream. A UTC timestamp, default to now.",
+                    "schema": {
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "description": "The subscription id",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/SUBSCRIPTION_UNSUCCESSFUL"
+                }
+            ]
+        },
+        {
+            "name": "starkex_unsubscribe",
+            "description": "Unsubscribe from a given event stream",
+            "params": [
+                {
+                    "name": "subscription_id",
+                    "description": "The subscription id, as returned from the subscribe method",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "boolean",
+                    "description": "Returns true if the subscription was cancelled successfully"
+                }
+            }
+        }
+    ],
+    "components": {
+        "schemas": {
+            "TXN_TYPE": {
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "enum": [
+                            "DEPOSIT"
+                        ]
+                    },
+                    {
+                        "$comment": "Allow future transaction types to be added and pass validation",
+                        "type": "string"
+                    }
+                ]
+            },
+            "DEPOSIT_TXN": {
+                "type": "object",
+                "properties": {
+                    "position_id": {
+                        "description": "The position ID to deposit to",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "public_key": {
+                        "description": "The position ID owner's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "amount": {
+                        "description": "Amount of collateral asset to be deposited",
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "SINGLE_TRANSACTION": {
+                "$comment": "Future transaction types should extend one of these below, with additional properties allowed. The transaction type should indicate the semantic of the object and how the client should parse it",
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/TRANSFER_WITH_ID"
+                    }
+                ]
+            },
+            "MULTI_TRANSACTION": {
+                "type": "object",
+                "properties": {
+                    "transactions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SINGLE_TRANSACTION"
+                        }
+                    }
+                }
+            },
+            "STARKEX_EVENT": {
+                "type": "object",
+                "properties": {
+                    "time": {
+                        "description": "A UTC timestamp for when the event occurred in StarkEx",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    },
+                    "transaction_type": {
+                        "$ref": "#/components/schemas/TXN_TYPE"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/PROCESSING_STATUS"
+                    },
+                    "transaction": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/SINGLE_TRANSACTION"
+                            },
+                            {
+                                "$ref": "#/components/schemas/MULTI_TRANSACTION"
+                            }
+                        ]
+                    }
+                }
+            },
+            "STARK_KEY": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/STARK_KEY"
+            },
+            "TIMESTAMP": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/TIMESTAMP"
+            },
+            "PROCESSING_STATUS": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/PROCESSING_STATUS"
+            }
+        },
+        "errors": {
+            "SUBSCRIPTION_UNSUCCESSFUL": {
+                "code": 7,
+                "message": "Unable to establish subscription"
+            }
+        }
+    }
+}
