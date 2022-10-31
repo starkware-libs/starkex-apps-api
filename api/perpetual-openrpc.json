@@ -113,9 +113,21 @@
             },
             "SINGLE_TRANSACTION": {
                 "$comment": "Future transaction types should extend one of these below, with additional properties allowed. The transaction type should indicate the semantic of the object and how the client should parse it",
-                "oneOf": [
+                "allOf": [
                     {
-                        "$ref": "#/components/schemas/TRANSFER_WITH_ID"
+                        "type": "object",
+                        "properties": {
+                            "transaction_id": {
+                                "$ref": "#/components/schemas/TXN_ID"
+                            }
+                        }
+                    },
+                    {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/DEPOSIT_TXN"
+                            }
+                        ]
                     }
                 ]
             },
@@ -163,6 +175,9 @@
             },
             "PROCESSING_STATUS": {
                 "$ref": "./api/nft-apps-openrpc.json#components/schemas/PROCESSING_STATUS"
+            },
+            "TXN_ID": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/TXN_ID"
             }
         },
         "errors": {
