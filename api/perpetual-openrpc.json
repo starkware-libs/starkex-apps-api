@@ -86,7 +86,8 @@
                             "DEPOSIT",
                             "WITHDRAWAL",
                             "WITHDRAWAL_TO_ADDR",
-                            "FORCED_WITHDRAWAL"
+                            "FORCED_WITHDRAWAL",
+                            "TRADE"
                         ]
                     },
                     {
@@ -94,6 +95,84 @@
                         "type": "string"
                     }
                 ]
+            },
+            "ORDER": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "enum": [
+                            "LIMIT_ORDER_WITH_FEES"
+                        ]
+                    },
+                    "nonce": {
+                        "description": "Unique nonce issued by the caller",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "public_key": {
+                        "description": "Public key of the party as registered on the StarkEx contract",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "amount_synthetic": {
+                        "description": "Amount of synthetic asset in the order",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "amount_collateral": {
+                        "description": "Amount of collateral asset in the order",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "asset_id_synthetic": {
+                        "description": "The synthetic asset ID (as registered on the contract)",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "asset_id_collateral": {
+                        "description": "The collateral asset ID (as registered on the contract)",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "position_id": {
+                        "description": "Position ID used for the trade",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "is_buying_synthetic": {
+                        "description": "A flag to indicate whether the order is for buying the synthetic amount or selling the synthetic amount",
+                        "type": "boolean"
+                    },
+                    "fee_limit": {
+                        "description": "The fee limit for this order",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "expiration_timestamp": {
+                        "description": "The timestamp after which this request is no longer valid",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            },
+            "TRADE": {
+                "$comment": "We assume that the orders are such that party a buys the synthetic asset, and party b buys the # collateral asset",
+                "type": "object",
+                "properties": {
+                    "party_a_order": {
+                        "$ref": "#/components/schemas/ORDER"
+                    },
+                    "party_b_order": {
+                        "$ref": "#/components/schemas/ORDER"
+                    },
+                    "actual_collateral": {
+                        "description": "The collateral amount sold in the trade",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "actual_synthetic": {
+                        "description": "The synthetic amount sold in the trade",
+                        "$ref": "#/components/schemas/POSITIVE_AMOUNT"
+                    },
+                    "actual_a_fees": {
+                        "description": "The amount party a paid for fees out of the maximal amount they were willing to pay",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "actual_b_fees": {
+                        "description": "The amount party b paid for fees of the maximal amount they were willing to pay",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    }
+                }
             },
             "FORCED_WITHDRAWAL_TXN": {
                 "type": "object",
@@ -204,6 +283,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/FORCED_WITHDRAWAL_TXN"
+                            },
+                            {
+                                "$ref": "#/components/schemas/TRADE"
                             }
                         ]
                     }
@@ -262,6 +344,24 @@
             },
             "ETH_ADDRESS": {
                 "$ref": "./api/nft-apps-openrpc.json#components/schemas/ETH_ADDRESS"
+            },
+            "AMOUNT": {
+                "type": "integer",
+                "minimum": 0
+            },
+            "POSITIVE_AMOUNT": {
+                "type": "integer",
+                "minimum": 1
+            },
+            "ASSET_ID": {
+                "description": "An asset id in perpetual system, 0 <= integer <= 2**120. In hex format",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{30}$"
+            },
+            "POSITION_ID": {
+                "description": "ID of a position. Integer, 64 bits, in hex format",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{16}$"
             }
         },
         "errors": {
