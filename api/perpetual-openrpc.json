@@ -89,7 +89,8 @@
                             "FORCED_WITHDRAWAL",
                             "TRADE",
                             "FORCED_TRADE",
-                            "TRANSFER"
+                            "TRANSFER",
+                            "CONDITIONAL_TRANSFER"
                         ]
                     },
                     {
@@ -262,6 +263,28 @@
                     }
                 }
             },
+            "CONDITIONAL_TRANSFER": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/TRANSFER"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "fact_registry_address": {
+                                "description": "The address of the fact registry smart contract",
+                                "$ref": "#/components/schemas/ETH_ADDRESS"
+                            },
+                            "fact": {
+                                "description": "The fact that should appear in the fact registry as a condition to the transfer. 32 bytes",
+                                "type": "string",
+                                "pattern": "^0x[a-fA-F0-9]{64}$"
+                            }
+                        }
+                    }
+                ]
+            },
             "FORCED_WITHDRAWAL_TXN": {
                 "type": "object",
                 "properties": {
@@ -380,6 +403,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/TRANSFER"
+                            },
+                            {
+                                "$ref": "#/components/schemas/CONDITIONAL_TRANSFER"
                             }
                         ]
                     }
