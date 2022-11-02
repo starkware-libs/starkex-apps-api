@@ -91,7 +91,8 @@
                             "FORCED_TRADE",
                             "TRANSFER",
                             "CONDITIONAL_TRANSFER",
-                            "LIQUIDATE"
+                            "LIQUIDATE",
+                            "DELEVERAGE"
                         ]
                     },
                     {
@@ -311,6 +312,35 @@
                     }
                 }
             },
+            "DELEVERAGE": {
+                "type": "object",
+                "properties": {
+                    "deleveraged_position_id": {
+                        "description": "The deleveraged position ID",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "deleverager_position_id": {
+                        "description": "The position ID to which the deleveraged position is attached",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "synthetic_asset_id": {
+                        "description": "The unique asset ID being deleveraged (as registered on the contract)",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "amount_synthetic": {
+                        "description": "The deleveraged's synthetic amount",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "amount_collateral": {
+                        "description": "The deleveraged's collateral amount",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "deleverager_is_buying_synthetic": {
+                        "description": "A flag which indicates if the deleverager is buying synthetic",
+                        "type": "boolean"
+                    }
+                }
+            },
             "FORCED_WITHDRAWAL_TXN": {
                 "type": "object",
                 "properties": {
@@ -435,6 +465,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/LIQUIDATE"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DELEVERAGE"
                             }
                         ]
                     }
