@@ -154,6 +154,10 @@
                     "nonce": {
                         "description": "Unique nonce issued by the caller",
                         "$ref": "#/components/schemas/NONCE"
+                    },
+                    "expiration_timestamp": {
+                        "description": "The timestamp after which this request is no longer valid",
+                        "$ref": "#/components/schemas/TIMESTAMP"
                     }
                 }
             },
