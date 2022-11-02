@@ -88,7 +88,8 @@
                             "WITHDRAWAL_TO_ADDR",
                             "FORCED_WITHDRAWAL",
                             "TRADE",
-                            "FORCED_TRADE"
+                            "FORCED_TRADE",
+                            "TRANSFER"
                         ]
                     },
                     {
@@ -224,6 +225,43 @@
                     }
                 }
             },
+            "TRANSFER": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "description": "The amount to transfer",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "nonce": {
+                        "description": "Unique nonce issued by the caller",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "sender_public_key": {
+                        "description": "The sender's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "sender_position_id": {
+                        "description": "The position ID to transfer from",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "receiver_public_key": {
+                        "description": "The receiver's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "receiver_position_id": {
+                        "description": "The position ID to transfer to",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "asset_id": {
+                        "description": ": The unique asset ID (as registered on the contract) to transfer. Currently only the collateral asset is supported",
+                        "$ref": "#/components/schemas/COLLATERAL_ASSET_ID"
+                    },
+                    "expiration_timestamp": {
+                        "description": "The timestamp after which this request is no longer valid",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            },
             "FORCED_WITHDRAWAL_TXN": {
                 "type": "object",
                 "properties": {
@@ -339,6 +377,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/FORCED_TRADE"
+                            },
+                            {
+                                "$ref": "#/components/schemas/TRANSFER"
                             }
                         ]
                     }
