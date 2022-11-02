@@ -92,7 +92,8 @@
                             "TRANSFER",
                             "CONDITIONAL_TRANSFER",
                             "LIQUIDATE",
-                            "DELEVERAGE"
+                            "DELEVERAGE",
+                            "FUNDING_TICK"
                         ]
                     },
                     {
@@ -341,6 +342,37 @@
                     }
                 }
             },
+            "FUNDING_TICK": {
+                "type": "object",
+                "properties": {
+                    "global_funding_indices": {
+                        "description": "Global funding indices information",
+                        "type": "object",
+                        "properties": {
+                            "timestamp": {
+                                "description": "The timestamp for which the funding indices are valid for",
+                                "$ref": "#/components/schemas/TIMESTAMP"
+                            },
+                            "indices": {
+                                "description": "Map of synthetic asset to its global funding index",
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "key": {
+                                            "$ref": "#/components/schemas/ASSET_ID"
+                                        },
+                                        "value": {
+                                            "description": "Funding index. -2^63 <= integer < 2^63",
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "FORCED_WITHDRAWAL_TXN": {
                 "type": "object",
                 "properties": {
@@ -468,6 +500,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/DELEVERAGE"
+                            },
+                            {
+                                "$ref": "#/components/schemas/FUNDING_TICK"
                             }
                         ]
                     }
