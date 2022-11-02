@@ -87,7 +87,8 @@
                             "WITHDRAWAL",
                             "WITHDRAWAL_TO_ADDR",
                             "FORCED_WITHDRAWAL",
-                            "TRADE"
+                            "TRADE",
+                            "FORCED_TRADE"
                         ]
                     },
                     {
@@ -171,6 +172,55 @@
                     "actual_b_fees": {
                         "description": "The amount party b paid for fees of the maximal amount they were willing to pay",
                         "$ref": "#/components/schemas/AMOUNT"
+                    }
+                }
+            },
+            "FORCED_TRADE": {
+                "type": "object",
+                "properties": {
+                    "public_key_party_a": {
+                        "description": "Party a's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "public_key_party_b": {
+                        "description": "Party b's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "position_id_party_a": {
+                        "description": "The position ID of party a",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "position_id_party_b": {
+                        "description": "The position ID of party b",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "collateral_asset_id": {
+                        "description": "The collateral unique asset ID (as registered on the contract)",
+                        "$ref": "#/components/schemas/COLLATERAL_ASSET_ID"
+                    },
+                    "synthetic_asset_id": {
+                        "description": "The unique asset ID of the synthetic asset that is traded",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "actual_collateral": {
+                        "description": "The amount of collateral asset traded",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "actual_synthetic": {
+                        "description": "The amount of synthetic asset traded",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "is_party_a_buying_synthetic": {
+                        "description": "Specifies if party A is buying the synthetic asset",
+                        "type": "boolean"
+                    },
+                    "nonce": {
+                        "description": "Unique nonce issued by the caller",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "is_valid": {
+                        "description": "A flag that specifies the validity of the forced action",
+                        "type": "boolean"
                     }
                 }
             },
@@ -286,6 +336,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/TRADE"
+                            },
+                            {
+                                "$ref": "#/components/schemas/FORCED_TRADE"
                             }
                         ]
                     }
@@ -357,6 +410,11 @@
                 "description": "An asset id in perpetual system, 0 <= integer <= 2**120. In hex format",
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]{30}$"
+            },
+            "COLLATERAL_ASSET_ID": {
+                "description": "An asset id, 0 <= integer <= 2**250, in hex format",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{62}$"
             },
             "POSITION_ID": {
                 "description": "ID of a position. Integer, 64 bits, in hex format",
