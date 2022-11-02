@@ -90,7 +90,8 @@
                             "TRADE",
                             "FORCED_TRADE",
                             "TRANSFER",
-                            "CONDITIONAL_TRANSFER"
+                            "CONDITIONAL_TRANSFER",
+                            "LIQUIDATE"
                         ]
                     },
                     {
@@ -285,6 +286,31 @@
                     }
                 ]
             },
+            "LIQUIDATE": {
+                "type": "object",
+                "properties": {
+                    "liquidator_order": {
+                        "description": "The liquidator order",
+                        "$ref": "#/components/schemas/ORDER"
+                    },
+                    "liquidated_position_id": {
+                        "description": "The liquidated position ID",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "actual_collateral": {
+                        "description": "The collateral amount sold in the liquidation",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "actual_synthetic": {
+                        "description": "The synthetic amount sold in the liquidation",
+                        "$ref": "#/components/schemas/POSITIVE_AMOUNT"
+                    },
+                    "actual_liquidator_fee": {
+                        "description": "The fee the liquidator paid out of the maximal amount they were willing to pay",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    }
+                }
+            },
             "FORCED_WITHDRAWAL_TXN": {
                 "type": "object",
                 "properties": {
@@ -406,6 +432,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/CONDITIONAL_TRANSFER"
+                            },
+                            {
+                                "$ref": "#/components/schemas/LIQUIDATE"
                             }
                         ]
                     }
