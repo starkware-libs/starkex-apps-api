@@ -93,7 +93,8 @@
                             "CONDITIONAL_TRANSFER",
                             "LIQUIDATE",
                             "DELEVERAGE",
-                            "FUNDING_TICK"
+                            "FUNDING_TICK",
+                            "ORACLE_PRICES_TICK"
                         ]
                     },
                     {
@@ -373,6 +374,62 @@
                     }
                 }
             },
+            "ASSET_ORACLE_PRICE": {
+                "description": "Represents a collection of signed oracle prices of a single synthetic asset and their median price value",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "$ref": "#/components/schemas/STARK_KEY"
+                        },
+                        "value": {
+                            "description": "Represents a single signed Oracle Price per unit",
+                            "type": "object",
+                            "properties": {
+                                "price": {
+                                    "description": "The signed price. 1 <= integer < 2^120",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "timestamped_signature": {
+                                    "$ref": "#/components/schemas/TIMESTAMPED_SIGNATURE"
+                                },
+                                "external_asset_id": {
+                                    "description": "Concatenation of the asset name and the oracle name (both in hex encoding)",
+                                    "type": "string",
+                                    "pattern": "^0x[a-fA-F0-9]{42}$",
+                                    "$comment": "168 bits (21 bytes, 42 hex digits) is taken from ORACLE_PRICE_SIGNED_ASSET_ID_UPPER_BOUND"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ORACLE_PRICES_TICK": {
+                "type": "object",
+                "properties": {
+                    "timestamp": {
+                        "description": "Transaction generation timestamp",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    },
+                    "oracle_prices": {
+                        "description": "Map between the asset ID to its median price and a collection of signed prices that generate this median",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "$ref": "#/components/schemas/ASSET_ID"
+                                },
+                                "value": {
+                                    "$ref": "#/components/schemas/ASSET_ORACLE_PRICE"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "FORCED_WITHDRAWAL_TXN": {
                 "type": "object",
                 "properties": {
@@ -503,6 +560,9 @@
                             },
                             {
                                 "$ref": "#/components/schemas/FUNDING_TICK"
+                            },
+                            {
+                                "$ref": "#/components/schemas/ORACLE_PRICES_TICK"
                             }
                         ]
                     }
@@ -584,6 +644,24 @@
                 "description": "ID of a position. Integer, 64 bits, in hex format",
                 "type": "string",
                 "pattern": "^0x[a-fA-F0-9]{16}$"
+            },
+            "TIMESTAMPED_SIGNATURE": {
+                "description": "Represents a STARK-friendly ECDSA signature which was signed at a certain timestamp",
+                "type": "object",
+                "properties": {
+                    "r": {
+                        "description": "1st ECDSA signature component",
+                        "type": "integer"
+                    },
+                    "s": {
+                        "description": "2nd ECDSA signature component",
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "description": "The time the signature was created",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
             }
         },
         "errors": {
