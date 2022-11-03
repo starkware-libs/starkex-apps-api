@@ -717,6 +717,10 @@
                     "user_key": {
                         "description": "The key of the user withdrawing, as registered on the StarkEx contract",
                         "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "is_false": {
+                        "description": "A flag indicating whether this is a false full withdrawal",
+                        "type": "boolean"
                     }
                 }
             },
