@@ -524,7 +524,10 @@
                             "transaction_id": {
                                 "$ref": "#/components/schemas/TXN_ID"
                             }
-                        }
+                        },
+                        "required": [
+                            "transaction_id"
+                        ]
                     },
                     {
                         "oneOf": [
@@ -602,7 +605,10 @@
                             }
                         ]
                     }
-                }
+                },
+                "required": [
+                    "transaction_type"
+                ]
             },
             "STARK_KEY": {
                 "$ref": "./api/nft-apps-openrpc.json#components/schemas/STARK_KEY"

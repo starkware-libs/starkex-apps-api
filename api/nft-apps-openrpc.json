@@ -781,7 +781,10 @@
                             }
                         ]
                     }
-                }
+                },
+                "required": [
+                    "transaction_type"
+                ]
             },
             "ASSET_HISTORY_ITEM": {
                 "oneOf": [
