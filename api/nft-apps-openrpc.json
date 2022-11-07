@@ -533,10 +533,259 @@
                     }
                 }
             }
+        },
+        {
+            "name": "starkex_subscribe",
+            "description": "Subscribe to a stream of events",
+            "params": [
+                {
+                    "name": "requested_transaction_types",
+                    "required": false,
+                    "description": "The events the client wishes to listen to",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TXN_TYPE"
+                        }
+                    }
+                },
+                {
+                    "name": "requested_statuses",
+                    "required": false,
+                    "description": "The transaction statuses the client would like to listen to",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PROCESSING_STATUS"
+                        }
+                    }
+                },
+                {
+                    "name": "start_from",
+                    "required": false,
+                    "description": "The earliest timestamp for events to retrieve on the stream. A UTC timestamp, default to now.",
+                    "schema": {
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "description": "The subscription id",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/SUBSCRIPTION_UNSUCCESSFUL"
+                }
+            ]
+        },
+        {
+            "name": "starkex_unsubscribe",
+            "description": "Unsubscribe from a given event stream",
+            "params": [
+                {
+                    "name": "subscription_id",
+                    "description": "The subscription id, as returned from the subscribe method",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "boolean",
+                    "description": "Returns true if the subscription was cancelled successfully"
+                }
+            }
         }
     ],
     "components": {
         "schemas": {
+            "TXN_TYPE": {
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "enum": [
+                            "TRANSFER",
+                            "SETTLEMENT",
+                            "MINT",
+                            "DEPOSIT",
+                            "WITHDRAW",
+                            "COND_TRANSFER",
+                            "FULL_WITHDRAWAL"
+                        ]
+                    },
+                    {
+                        "$comment": "Allow future transaction types to be added and pass validation",
+                        "type": "string"
+                    }
+                ]
+            },
+            "PROCESSING_STATUS": {
+                "type": "string",
+                "enum": [
+                    "RECEIVED",
+                    "PROCESSING",
+                    "ACCEPTED",
+                    "REJECTED"
+                ]
+            },
+            "DEPOSIT_OR_WITHDRAW": {
+                "type": "object",
+                "properties": {
+                    "txn_type": {
+                        "type": "string",
+                        "$comment": "accepted values are DEPOSIT/WITHDRAW, like in TXN_TYPE. It's in the event, but also here so the object is self-contained",
+                        "enum": [
+                            "DEPOSIT",
+                            "WITHDRAW"
+                        ]
+                    },
+                    "vault_id": {
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "user_key": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "asset_type": {
+                        "$ref": "#/components/schemas/ASSET_TYPE"
+                    },
+                    "amount": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "transaction_id": {
+                        "$ref": "#/components/schemas/TXN_ID"
+                    }
+                }
+            },
+            "COND_TRANSFER": {
+                "description": "A conditional transfer transaction",
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "description": "Amount transferred",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "nonce": {
+                        "description": "The nonce used when signing the transaction",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "sender_key": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "sender_vault_id": {
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "token": {
+                        "$ref": "#/components/schemas/TOKEN_ID"
+                    },
+                    "receiver_key": {
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "receiver_vault_id": {
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "fact_registry_address": {
+                        "description": "The address of the fact registry smart contract",
+                        "$ref": "#/components/schemas/ETH_ADDRESS"
+                    },
+                    "fact": {
+                        "description": "The fact that should appear in the fact registry as a condition to the transfer",
+                        "$comment": "A 32 byte blob, as 64 hex digits",
+                        "type": "string",
+                        "pattern": "^0x[a-fA-F0-9]{64}$"
+                    },
+                    "transaction_id": {
+                        "$ref": "#/components/schemas/TXN_ID"
+                    }
+                }
+            },
+            "FULL_WITHDRAWAL": {
+                "type": "object",
+                "properties": {
+                    "vault_id": {
+                        "description": "The vault ID in StarkEx to withdraw from",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "user_key": {
+                        "description": "The key of the user withdrawing, as registered on the StarkEx contract",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "is_false": {
+                        "description": "A flag indicating whether this is a false full withdrawal",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "MULTI_TRANSACTION": {
+                "type": "object",
+                "properties": {
+                    "transactions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SINGLE_TRANSACTION"
+                        }
+                    }
+                }
+            },
+            "SINGLE_TRANSACTION": {
+                "$comment": "Future transaction types should extend one of these below, with additional properties allowed. The transaction type should indicate the semantic of the object and how the client should parse it",
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/TRANSFER_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/SETTLEMENT_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/MINT_WITH_ID"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DEPOSIT_OR_WITHDRAW"
+                    },
+                    {
+                        "$ref": "#/components/schemas/COND_TRANSFER"
+                    },
+                    {
+                        "$ref": "#/components/schemas/FULL_WITHDRAWAL"
+                    }
+                ]
+            },
+            "STARKEX_EVENT": {
+                "type": "object",
+                "properties": {
+                    "time": {
+                        "description": "A UTC timestamp for when the event occurred in StarkEx",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    },
+                    "transaction_type": {
+                        "$ref": "#/components/schemas/TXN_TYPE"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/PROCESSING_STATUS"
+                    },
+                    "transaction": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/SINGLE_TRANSACTION"
+                            },
+                            {
+                                "$ref": "#/components/schemas/MULTI_TRANSACTION"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "transaction_type"
+                ]
+            },
             "ASSET_HISTORY_ITEM": {
                 "oneOf": [
                     {
@@ -584,7 +833,7 @@
                     "amount": {
                         "description": "Amount transferred",
                         "type": "integer",
-                        "minimum": 1
+                        "minimum": 0
                     },
                     "nonce": {
                         "description": "The nonce used when signing the transaction",
@@ -973,6 +1222,11 @@
                     }
                 }
             },
+            "TIMESTAMP": {
+                "description": "A UTC timestamp",
+                "type": "integer",
+                "minimum": 0
+            },
             "EXPIRATION_TIMESTAMP": {
                 "type": "integer",
                 "minimum": 0,
@@ -1297,6 +1551,10 @@
             "ORDER_NOT_FOUND": {
                 "code": 6,
                 "message": "The requested order was not found"
+            },
+            "SUBSCRIPTION_UNSUCCESSFUL": {
+                "code": 7,
+                "message": "Unable to establish subscription"
             }
         }
     }

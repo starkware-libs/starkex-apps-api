@@ -1,0 +1,680 @@
+{
+    "openrpc": "1.2.4",
+    "info": {
+        "title": "StarkEx Perpetual Application API",
+        "description": "A specification of a standard interface for applications using StarkEx Perpetual",
+        "version": "0.1.0"
+    },
+    "methods": [
+        {
+            "name": "starkex_subscribe",
+            "description": "Subscribe to a stream of events",
+            "params": [
+                {
+                    "name": "requested_transaction_types",
+                    "required": false,
+                    "description": "The events the client wishes to listen to",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TXN_TYPE"
+                        }
+                    }
+                },
+                {
+                    "name": "requested_statuses",
+                    "required": false,
+                    "description": "The transaction statuses the client would like to listen to",
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PROCESSING_STATUS"
+                        }
+                    }
+                },
+                {
+                    "name": "start_from",
+                    "required": false,
+                    "description": "The earliest timestamp for events to retrieve on the stream. A UTC timestamp, default to now.",
+                    "schema": {
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "description": "The subscription id",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "errors": [
+                {
+                    "$ref": "#/components/errors/SUBSCRIPTION_UNSUCCESSFUL"
+                }
+            ]
+        },
+        {
+            "name": "starkex_unsubscribe",
+            "description": "Unsubscribe from a given event stream",
+            "params": [
+                {
+                    "name": "subscription_id",
+                    "description": "The subscription id, as returned from the subscribe method",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            ],
+            "result": {
+                "name": "result",
+                "schema": {
+                    "type": "boolean",
+                    "description": "Returns true if the subscription was cancelled successfully"
+                }
+            }
+        }
+    ],
+    "components": {
+        "schemas": {
+            "TXN_TYPE": {
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "enum": [
+                            "DEPOSIT",
+                            "WITHDRAWAL",
+                            "WITHDRAWAL_TO_ADDR",
+                            "FORCED_WITHDRAWAL",
+                            "TRADE",
+                            "FORCED_TRADE",
+                            "TRANSFER",
+                            "CONDITIONAL_TRANSFER",
+                            "LIQUIDATE",
+                            "DELEVERAGE",
+                            "FUNDING_TICK",
+                            "ORACLE_PRICES_TICK"
+                        ]
+                    },
+                    {
+                        "$comment": "Allow future transaction types to be added and pass validation",
+                        "type": "string"
+                    }
+                ]
+            },
+            "ORDER": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "enum": [
+                            "LIMIT_ORDER_WITH_FEES"
+                        ]
+                    },
+                    "nonce": {
+                        "description": "Unique nonce issued by the caller",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "public_key": {
+                        "description": "Public key of the party as registered on the StarkEx contract",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "amount_synthetic": {
+                        "description": "Amount of synthetic asset in the order",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "amount_collateral": {
+                        "description": "Amount of collateral asset in the order",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "asset_id_synthetic": {
+                        "description": "The synthetic asset ID (as registered on the contract)",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "asset_id_collateral": {
+                        "description": "The collateral asset ID (as registered on the contract)",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "position_id": {
+                        "description": "Position ID used for the trade",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "is_buying_synthetic": {
+                        "description": "A flag to indicate whether the order is for buying the synthetic amount or selling the synthetic amount",
+                        "type": "boolean"
+                    },
+                    "fee_limit": {
+                        "description": "The fee limit for this order",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "expiration_timestamp": {
+                        "description": "The timestamp after which this request is no longer valid",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            },
+            "TRADE": {
+                "$comment": "We assume that the orders are such that party a buys the synthetic asset, and party b buys the # collateral asset",
+                "type": "object",
+                "properties": {
+                    "party_a_order": {
+                        "$ref": "#/components/schemas/ORDER"
+                    },
+                    "party_b_order": {
+                        "$ref": "#/components/schemas/ORDER"
+                    },
+                    "actual_collateral": {
+                        "description": "The collateral amount sold in the trade",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "actual_synthetic": {
+                        "description": "The synthetic amount sold in the trade",
+                        "$ref": "#/components/schemas/POSITIVE_AMOUNT"
+                    },
+                    "actual_a_fees": {
+                        "description": "The amount party a paid for fees out of the maximal amount they were willing to pay",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "actual_b_fees": {
+                        "description": "The amount party b paid for fees of the maximal amount they were willing to pay",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    }
+                }
+            },
+            "FORCED_TRADE": {
+                "type": "object",
+                "properties": {
+                    "public_key_party_a": {
+                        "description": "Party a's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "public_key_party_b": {
+                        "description": "Party b's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "position_id_party_a": {
+                        "description": "The position ID of party a",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "position_id_party_b": {
+                        "description": "The position ID of party b",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "collateral_asset_id": {
+                        "description": "The collateral unique asset ID (as registered on the contract)",
+                        "$ref": "#/components/schemas/COLLATERAL_ASSET_ID"
+                    },
+                    "synthetic_asset_id": {
+                        "description": "The unique asset ID of the synthetic asset that is traded",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "actual_collateral": {
+                        "description": "The amount of collateral asset traded",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "actual_synthetic": {
+                        "description": "The amount of synthetic asset traded",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "is_party_a_buying_synthetic": {
+                        "description": "Specifies if party A is buying the synthetic asset",
+                        "type": "boolean"
+                    },
+                    "nonce": {
+                        "description": "Unique nonce issued by the caller",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "is_valid": {
+                        "description": "A flag that specifies the validity of the forced action",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "TRANSFER": {
+                "type": "object",
+                "properties": {
+                    "amount": {
+                        "description": "The amount to transfer",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "nonce": {
+                        "description": "Unique nonce issued by the caller",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "sender_public_key": {
+                        "description": "The sender's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "sender_position_id": {
+                        "description": "The position ID to transfer from",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "receiver_public_key": {
+                        "description": "The receiver's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "receiver_position_id": {
+                        "description": "The position ID to transfer to",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "asset_id": {
+                        "description": ": The unique asset ID (as registered on the contract) to transfer. Currently only the collateral asset is supported",
+                        "$ref": "#/components/schemas/COLLATERAL_ASSET_ID"
+                    },
+                    "expiration_timestamp": {
+                        "description": "The timestamp after which this request is no longer valid",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            },
+            "CONDITIONAL_TRANSFER": {
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/TRANSFER"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "fact_registry_address": {
+                                "description": "The address of the fact registry smart contract",
+                                "$ref": "#/components/schemas/ETH_ADDRESS"
+                            },
+                            "fact": {
+                                "description": "The fact that should appear in the fact registry as a condition to the transfer. 32 bytes",
+                                "type": "string",
+                                "pattern": "^0x[a-fA-F0-9]{64}$"
+                            }
+                        }
+                    }
+                ]
+            },
+            "LIQUIDATE": {
+                "type": "object",
+                "properties": {
+                    "liquidator_order": {
+                        "description": "The liquidator order",
+                        "$ref": "#/components/schemas/ORDER"
+                    },
+                    "liquidated_position_id": {
+                        "description": "The liquidated position ID",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "actual_collateral": {
+                        "description": "The collateral amount sold in the liquidation",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "actual_synthetic": {
+                        "description": "The synthetic amount sold in the liquidation",
+                        "$ref": "#/components/schemas/POSITIVE_AMOUNT"
+                    },
+                    "actual_liquidator_fee": {
+                        "description": "The fee the liquidator paid out of the maximal amount they were willing to pay",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    }
+                }
+            },
+            "DELEVERAGE": {
+                "type": "object",
+                "properties": {
+                    "deleveraged_position_id": {
+                        "description": "The deleveraged position ID",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "deleverager_position_id": {
+                        "description": "The position ID to which the deleveraged position is attached",
+                        "$ref": "#/components/schemas/POSITION_ID"
+                    },
+                    "synthetic_asset_id": {
+                        "description": "The unique asset ID being deleveraged (as registered on the contract)",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "amount_synthetic": {
+                        "description": "The deleveraged's synthetic amount",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "amount_collateral": {
+                        "description": "The deleveraged's collateral amount",
+                        "$ref": "#/components/schemas/AMOUNT"
+                    },
+                    "deleverager_is_buying_synthetic": {
+                        "description": "A flag which indicates if the deleverager is buying synthetic",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "FUNDING_TICK": {
+                "type": "object",
+                "properties": {
+                    "global_funding_indices": {
+                        "description": "Global funding indices information",
+                        "type": "object",
+                        "properties": {
+                            "timestamp": {
+                                "description": "The timestamp for which the funding indices are valid for",
+                                "$ref": "#/components/schemas/TIMESTAMP"
+                            },
+                            "indices": {
+                                "description": "Map of synthetic asset to its global funding index",
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "key": {
+                                            "$ref": "#/components/schemas/ASSET_ID"
+                                        },
+                                        "value": {
+                                            "description": "Funding index. -2^63 <= integer < 2^63",
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ASSET_ORACLE_PRICE": {
+                "description": "Represents a collection of signed oracle prices of a single synthetic asset and their median price value",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "key": {
+                            "$ref": "#/components/schemas/STARK_KEY"
+                        },
+                        "value": {
+                            "description": "Represents a single signed Oracle Price per unit",
+                            "type": "object",
+                            "properties": {
+                                "price": {
+                                    "description": "The signed price. 1 <= integer < 2^120",
+                                    "type": "integer",
+                                    "minimum": 1
+                                },
+                                "timestamped_signature": {
+                                    "$ref": "#/components/schemas/TIMESTAMPED_SIGNATURE"
+                                },
+                                "external_asset_id": {
+                                    "description": "Concatenation of the asset name and the oracle name (both in hex encoding)",
+                                    "type": "string",
+                                    "pattern": "^0x[a-fA-F0-9]{42}$",
+                                    "$comment": "168 bits (21 bytes, 42 hex digits) is taken from ORACLE_PRICE_SIGNED_ASSET_ID_UPPER_BOUND"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ORACLE_PRICES_TICK": {
+                "type": "object",
+                "properties": {
+                    "timestamp": {
+                        "description": "Transaction generation timestamp",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    },
+                    "oracle_prices": {
+                        "description": "Map between the asset ID to its median price and a collection of signed prices that generate this median",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "key": {
+                                    "$ref": "#/components/schemas/ASSET_ID"
+                                },
+                                "value": {
+                                    "$ref": "#/components/schemas/ASSET_ORACLE_PRICE"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "FORCED_WITHDRAWAL_TXN": {
+                "type": "object",
+                "properties": {
+                    "position_id": {
+                        "description": "The position ID to withdraw from",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "public_key": {
+                        "description": "The position ID owner's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "amount": {
+                        "description": "Amount to withdraw",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "is_valid": {
+                        "description": "A flag that specifies the validity of the forced action",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "WITHDRAWAL_TO_ADDR_TXN": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/WITHDRAWAL_TXN"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "eth_address": {
+                                "description": "The Ethereum address to move the funds into",
+                                "$ref": "#/components/schemas/ETH_ADDRESS"
+                            }
+                        }
+                    }
+                ]
+            },
+            "WITHDRAWAL_TXN": {
+                "type": "object",
+                "properties": {
+                    "position_id": {
+                        "description": "The position ID to withdraw from",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "public_key": {
+                        "description": "The position ID owner's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "amount": {
+                        "description": "Amount to withdraw",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "nonce": {
+                        "description": "Unique nonce issued by the caller",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "expiration_timestamp": {
+                        "description": "The timestamp after which this request is no longer valid",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            },
+            "DEPOSIT_TXN": {
+                "type": "object",
+                "properties": {
+                    "position_id": {
+                        "description": "The position ID to deposit to",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "public_key": {
+                        "description": "The position ID owner's public key",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "amount": {
+                        "description": "Amount of collateral asset to be deposited",
+                        "type": "integer",
+                        "minimum": 0
+                    }
+                }
+            },
+            "SINGLE_TRANSACTION": {
+                "$comment": "Future transaction types should extend one of these below, with additional properties allowed. The transaction type should indicate the semantic of the object and how the client should parse it",
+                "allOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "transaction_id": {
+                                "$ref": "#/components/schemas/TXN_ID"
+                            }
+                        },
+                        "required": [
+                            "transaction_id"
+                        ]
+                    },
+                    {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/DEPOSIT_TXN"
+                            },
+                            {
+                                "$ref": "#/components/schemas/WITHDRAWAL_TXN"
+                            },
+                            {
+                                "$ref": "#/components/schemas/WITHDRAWAL_TO_ADDR_TXN"
+                            },
+                            {
+                                "$ref": "#/components/schemas/FORCED_WITHDRAWAL_TXN"
+                            },
+                            {
+                                "$ref": "#/components/schemas/TRADE"
+                            },
+                            {
+                                "$ref": "#/components/schemas/FORCED_TRADE"
+                            },
+                            {
+                                "$ref": "#/components/schemas/TRANSFER"
+                            },
+                            {
+                                "$ref": "#/components/schemas/CONDITIONAL_TRANSFER"
+                            },
+                            {
+                                "$ref": "#/components/schemas/LIQUIDATE"
+                            },
+                            {
+                                "$ref": "#/components/schemas/DELEVERAGE"
+                            },
+                            {
+                                "$ref": "#/components/schemas/FUNDING_TICK"
+                            },
+                            {
+                                "$ref": "#/components/schemas/ORACLE_PRICES_TICK"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "MULTI_TRANSACTION": {
+                "type": "object",
+                "properties": {
+                    "transactions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SINGLE_TRANSACTION"
+                        }
+                    }
+                }
+            },
+            "STARKEX_EVENT": {
+                "type": "object",
+                "properties": {
+                    "time": {
+                        "description": "A UTC timestamp for when the event occurred in StarkEx",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    },
+                    "transaction_type": {
+                        "$ref": "#/components/schemas/TXN_TYPE"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/PROCESSING_STATUS"
+                    },
+                    "transaction": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/SINGLE_TRANSACTION"
+                            },
+                            {
+                                "$ref": "#/components/schemas/MULTI_TRANSACTION"
+                            }
+                        ]
+                    }
+                },
+                "required": [
+                    "transaction_type"
+                ]
+            },
+            "STARK_KEY": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/STARK_KEY"
+            },
+            "TIMESTAMP": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/TIMESTAMP"
+            },
+            "PROCESSING_STATUS": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/PROCESSING_STATUS"
+            },
+            "TXN_ID": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/TXN_ID"
+            },
+            "NONCE": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/NONCE"
+            },
+            "ETH_ADDRESS": {
+                "$ref": "./api/nft-apps-openrpc.json#components/schemas/ETH_ADDRESS"
+            },
+            "AMOUNT": {
+                "type": "integer",
+                "minimum": 0
+            },
+            "POSITIVE_AMOUNT": {
+                "type": "integer",
+                "minimum": 1
+            },
+            "ASSET_ID": {
+                "description": "An asset id in perpetual system, 0 <= integer <= 2**120. In hex format",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{30}$"
+            },
+            "COLLATERAL_ASSET_ID": {
+                "description": "An asset id, 0 <= integer <= 2**250, in hex format",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{62}$"
+            },
+            "POSITION_ID": {
+                "description": "ID of a position. Integer, 64 bits, in hex format",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{16}$"
+            },
+            "TIMESTAMPED_SIGNATURE": {
+                "description": "Represents a STARK-friendly ECDSA signature which was signed at a certain timestamp",
+                "type": "object",
+                "properties": {
+                    "r": {
+                        "description": "1st ECDSA signature component",
+                        "type": "integer"
+                    },
+                    "s": {
+                        "description": "2nd ECDSA signature component",
+                        "type": "integer"
+                    },
+                    "timestamp": {
+                        "description": "The time the signature was created",
+                        "$ref": "#/components/schemas/TIMESTAMP"
+                    }
+                }
+            }
+        },
+        "errors": {
+            "SUBSCRIPTION_UNSUCCESSFUL": {
+                "code": 7,
+                "message": "Unable to establish subscription"
+            }
+        }
+    }
+}
