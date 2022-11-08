@@ -855,7 +855,7 @@
                         "description": "The key of the receiving user",
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
-                    "receiver_vault": {
+                    "receiver_vault_id": {
                         "description": "The target vault for the transfer",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
