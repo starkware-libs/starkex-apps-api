@@ -855,7 +855,7 @@
                         "description": "The key of the receiving user",
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
-                    "receiver_vault": {
+                    "receiver_vault_id": {
                         "description": "The target vault for the transfer",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
@@ -994,6 +994,21 @@
                         "properties": {
                             "transaction_id": {
                                 "$ref": "#/components/schemas/TXN_ID"
+                            },
+                            "minting_blob": {
+                                "$ref": "#/components/schemas/MINTING_BLOB"
+                            },
+                            "vault_id": {
+                                "$ref": "#/components/schemas/VAULT_ID"
+                            },
+                            "asset_id": {
+                                "$ref": "#/components/schemas/ASSET_ID"
+                            },
+                            "asset_info": {
+                                "$ref": "#/components/schemas/ASSET_INFO"
+                            },
+                            "proof": {
+                                "$ref": "#/components/schemas/MERKLE_PROOF"
                             }
                         }
                     }
@@ -1385,16 +1400,7 @@
                         "type": "string"
                     },
                     "proof": {
-                        "type": "object",
-                        "properties": {
-                            "path": {
-                                "$ref": "#/components/schemas/MERKLE_PATH"
-                            },
-                            "root": {
-                                "description": "The state root where the path is relevant",
-                                "$ref": "#/components/schemas/STATE_ROOT"
-                            }
-                        }
+                        "$ref": "#/components/schemas/MERKLE_PROOF"
                     },
                     "metadata": {
                         "$ref": "#/components/schemas/METADATA_DICT"
@@ -1404,6 +1410,18 @@
                         "items": {
                             "$ref": "#/components/schemas/KEYWORD"
                         }
+                    }
+                }
+            },
+            "MERKLE_PROOF": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "$ref": "#/components/schemas/MERKLE_PATH"
+                    },
+                    "root": {
+                        "description": "The state root where the path is relevant",
+                        "$ref": "#/components/schemas/STATE_ROOT"
                     }
                 }
             },
