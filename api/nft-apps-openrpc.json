@@ -649,13 +649,15 @@
                     "vault_id": {
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
-                    "user_key": {
+                    "stark_key": {
+                        "description": "Public key of the party as registered on the StarkEx contract",
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
-                    "asset_type": {
+                    "token_id": {
                         "$ref": "#/components/schemas/ASSET_TYPE"
                     },
                     "amount": {
+                        "description": "Amount of token to be deposited",
                         "type": "integer",
                         "minimum": 0
                     },
@@ -677,7 +679,7 @@
                         "description": "The nonce used when signing the transaction",
                         "$ref": "#/components/schemas/NONCE"
                     },
-                    "sender_key": {
+                    "sender_public_key": {
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
                     "sender_vault_id": {
@@ -686,7 +688,7 @@
                     "token": {
                         "$ref": "#/components/schemas/TOKEN_ID"
                     },
-                    "receiver_key": {
+                    "receiver_public_key": {
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
                     "receiver_vault_id": {
@@ -702,6 +704,10 @@
                         "type": "string",
                         "pattern": "^0x[a-fA-F0-9]{64}$"
                     },
+                    "expiration_timestamp": {
+                        "description": "The expiration timestamp of the transaction",
+                        "$ref": "#/components/schemas/EXPIRATION_TIMESTAMP"
+                    },
                     "transaction_id": {
                         "$ref": "#/components/schemas/TXN_ID"
                     }
@@ -714,7 +720,7 @@
                         "description": "The vault ID in StarkEx to withdraw from",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
-                    "user_key": {
+                    "stark_key": {
                         "description": "The key of the user withdrawing, as registered on the StarkEx contract",
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
@@ -727,7 +733,7 @@
             "MULTI_TRANSACTION": {
                 "type": "object",
                 "properties": {
-                    "transactions": {
+                    "txs": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/SINGLE_TRANSACTION"
@@ -839,7 +845,7 @@
                         "description": "The nonce used when signing the transaction",
                         "$ref": "#/components/schemas/NONCE"
                     },
-                    "sender_key": {
+                    "sender_public_key": {
                         "description": "The key of the sending user",
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
@@ -847,11 +853,11 @@
                         "description": "The vault that is the source of the transfer",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
-                    "asset_id": {
+                    "token_id": {
                         "description": "The id of the asset or token transferred",
                         "$ref": "#/components/schemas/ASSET_ID"
                     },
-                    "receiver_key": {
+                    "receiver_public_key": {
                         "description": "The key of the receiving user",
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
@@ -867,11 +873,11 @@
                         "description": "The transfer signature details",
                         "$ref": "#/components/schemas/SIGNATURE"
                     },
-                    "fee_requested": {
+                    "fee_info_user": {
                         "description": "The fee information for this transfer",
                         "$ref": "#/components/schemas/FEE_LIMIT"
                     },
-                    "fee_taken": {
+                    "fee_info_exchange": {
                         "description": "Information about the fee taken, and to which vault",
                         "$ref": "#/components/schemas/FEE_LIMIT"
                     }
@@ -927,7 +933,7 @@
                             "ERC1155"
                         ]
                     },
-                    "owner_key": {
+                    "stark_key": {
                         "description": "The stark key of the owner of the NFT",
                         "$ref": "#/components/schemas/STARK_KEY"
                     },
@@ -1109,21 +1115,21 @@
                 "description": "An object describing the settlement itself - how much was transferred, and fees collected",
                 "type": "object",
                 "properties": {
-                    "party_a_amount": {
+                    "party_a_sold": {
                         "description": "Amount of assets transferred from A to B",
                         "type": "integer",
                         "minimum": 0
                     },
-                    "party_b_amount": {
+                    "party_b_sold": {
                         "description": "Amount of assets transferred from B to A",
                         "type": "integer",
                         "minimum": 0
                     },
-                    "a_fee": {
+                    "party_a_fee_info": {
                         "description": "Exchange fee for party A",
                         "$ref": "#/components/schemas/FEE_INFO"
                     },
-                    "b_fee": {
+                    "party_b_fee_info": {
                         "description": "Exchange fee for party B",
                         "$ref": "#/components/schemas/FEE_INFO"
                     }
@@ -1136,7 +1142,7 @@
                     "settlement_info": {
                         "$ref": "#/components/schemas/SETTLEMENT_INFO"
                     },
-                    "buy_order": {
+                    "party_a_order": {
                         "$comment": "type of order must be BUY",
                         "allOf": [
                             {
@@ -1152,7 +1158,7 @@
                             }
                         ]
                     },
-                    "sell_order": {
+                    "party_b_order": {
                         "$comment": "type of order must be SELL",
                         "allOf": [
                             {
@@ -1195,29 +1201,29 @@
                             "SELL"
                         ]
                     },
-                    "party_a_vault_id": {
+                    "vault_id_sell": {
                         "description": "The vault id for the first party in the order",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
-                    "party_a_asset_id": {
+                    "token_sell": {
                         "description": "The 1st asset id to buy/sell",
                         "$ref": "#/components/schemas/ASSET_ID"
                     },
-                    "party_a_amount": {
-                        "description": "The 1st amount to sell/buy",
+                    "amount_sell": {
+                        "description": "The 1st amount - to sell",
                         "type": "integer",
                         "minimum": 1
                     },
-                    "party_b_vault_id": {
+                    "vault_id_buy": {
                         "description": "The vault id for the second party in the order",
                         "$ref": "#/components/schemas/VAULT_ID"
                     },
-                    "party_b_asset_id": {
+                    "token_buy": {
                         "description": "The 2nd asset id to buy/sell",
                         "$ref": "#/components/schemas/ASSET_ID"
                     },
-                    "party_b_amount": {
-                        "description": "The 2nd amount to sell/buy",
+                    "amount_buy": {
+                        "description": "The 2nd amount - to buy",
                         "type": "integer",
                         "minimum": 1
                     },
@@ -1232,7 +1238,7 @@
                         "description": "The user's signature on the order",
                         "$ref": "#/components/schemas/SIGNATURE"
                     },
-                    "fee_limit": {
+                    "fee_info": {
                         "$ref": "#/components/schemas/FEE_LIMIT"
                     }
                 }
@@ -1472,7 +1478,7 @@
                 "pattern": "^0x0[0-7]{1}[a-fA-F0-9]{62}$"
             },
             "ASSET_TYPE": {
-                "description": "The asset type. A uint256 value",
+                "description": "The asset type. A uint256 value, up to 2^31, as hex digits",
                 "$ref": "#/components/schemas/NUM_AS_HEX"
             },
             "MERKLE_PATH": {
