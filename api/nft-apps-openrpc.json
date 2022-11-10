@@ -704,6 +704,10 @@
                         "type": "string",
                         "pattern": "^0x[a-fA-F0-9]{64}$"
                     },
+                    "expiration_timestamp": {
+                        "description": "The expiration timestamp of the transaction",
+                        "$ref": "#/components/schemas/EXPIRATION_TIMESTAMP"
+                    },
                     "transaction_id": {
                         "$ref": "#/components/schemas/TXN_ID"
                     }
