@@ -36,7 +36,7 @@
                             "description": "The assets for this user",
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/NFT_ASSET"
+                                "$ref": "#/components/schemas/ASSET"
                             }
                         },
                         "continuation_token": {
@@ -63,7 +63,7 @@
             "result": {
                 "name": "result",
                 "schema": {
-                    "$ref": "#/components/schemas/NFT_ASSET"
+                    "$ref": "#/components/schemas/ASSET"
                 }
             },
             "errors": [
@@ -196,7 +196,7 @@
                         "assets": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/NFT_ASSET"
+                                "$ref": "#/components/schemas/ASSET"
                             }
                         },
                         "continuation_token": {
@@ -1353,7 +1353,7 @@
             "ASSET_WITH_TXN_HISTORY": {
                 "allOf": [
                     {
-                        "$ref": "#/components/schemas/NFT_ASSET"
+                        "$ref": "#/components/schemas/ASSET"
                     },
                     {
                         "type": "object",
@@ -1368,7 +1368,7 @@
                     }
                 ]
             },
-            "NFT_ASSET": {
+            "ASSET": {
                 "type": "object",
                 "properties": {
                     "name": {
@@ -1416,6 +1416,11 @@
                         "items": {
                             "$ref": "#/components/schemas/KEYWORD"
                         }
+                    },
+                    "amount": {
+                        "description": "The amount of the asset",
+                        "type": "integer",
+                        "minimum": 0
                     }
                 }
             },
