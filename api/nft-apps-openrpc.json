@@ -36,7 +36,7 @@
                             "description": "The assets for this user",
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/NFT_ASSET"
+                                "$ref": "#/components/schemas/ASSET"
                             }
                         },
                         "continuation_token": {
@@ -63,7 +63,7 @@
             "result": {
                 "name": "result",
                 "schema": {
-                    "$ref": "#/components/schemas/NFT_ASSET"
+                    "$ref": "#/components/schemas/ASSET"
                 }
             },
             "errors": [
@@ -196,7 +196,7 @@
                         "assets": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/components/schemas/NFT_ASSET"
+                                "$ref": "#/components/schemas/ASSET"
                             }
                         },
                         "continuation_token": {
@@ -1010,9 +1010,6 @@
                             "asset_id": {
                                 "$ref": "#/components/schemas/ASSET_ID"
                             },
-                            "asset_info": {
-                                "$ref": "#/components/schemas/ASSET_INFO"
-                            },
                             "proof": {
                                 "$ref": "#/components/schemas/MERKLE_PROOF"
                             }
@@ -1353,7 +1350,7 @@
             "ASSET_WITH_TXN_HISTORY": {
                 "allOf": [
                     {
-                        "$ref": "#/components/schemas/NFT_ASSET"
+                        "$ref": "#/components/schemas/ASSET"
                     },
                     {
                         "type": "object",
@@ -1368,7 +1365,74 @@
                     }
                 ]
             },
-            "NFT_ASSET": {
+            "COMMON_ASSET_PROPERTIES": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "ETH",
+                                    "ERC721",
+                                    "ERC1155",
+                                    "ERC20"
+                                ]
+                            },
+                            {
+                                "$comment": "Allow future asset types to be added and pass validation",
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "owner_key": {
+                        "description": "The stark key of the owner of the NFT",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    },
+                    "asset_id": {
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    }
+                }
+            },
+            "ETH_ASSET": {
+                "allOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "description": "The amount of the asset",
+                                "type": "integer",
+                                "minimum": 0
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/COMMON_ASSET_PROPERTIES"
+                    }
+                ]
+            },
+            "ERC20_ASSET": {
+                "allOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "description": "The amount of the asset",
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "contract_address": {
+                                "description": "Address of the NFT contract on L1",
+                                "$ref": "#/components/schemas/ETH_ADDRESS"
+                            }
+                        }
+                    },
+                    {
+                        "$ref": "#/components/schemas/COMMON_ASSET_PROPERTIES"
+                    }
+                ]
+            },
+            "COMMON_NFT_ASSET_PROPERTIES": {
                 "type": "object",
                 "properties": {
                     "name": {
@@ -1379,10 +1443,6 @@
                         "description": "A description of the NFT",
                         "type": "string"
                     },
-                    "owner_key": {
-                        "description": "The stark key of the owner of the NFT",
-                        "$ref": "#/components/schemas/STARK_KEY"
-                    },
                     "contract_address": {
                         "description": "Address of the NFT contract on L1",
                         "$ref": "#/components/schemas/ETH_ADDRESS"
@@ -1390,12 +1450,6 @@
                     "collection_id": {
                         "description": "The id of the collection this NFT belongs to",
                         "$ref": "#/components/schemas/COLLECTION_ID"
-                    },
-                    "asset_id": {
-                        "$ref": "#/components/schemas/ASSET_ID"
-                    },
-                    "asset_info": {
-                        "$ref": "#/components/schemas/ASSET_INFO"
                     },
                     "minting_blob": {
                         "description": "For an NFT, the blob included in the asset id hash",
@@ -1418,6 +1472,52 @@
                         }
                     }
                 }
+            },
+            "ERC721_ASSET": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/COMMON_ASSET_PROPERTIES"
+                    },
+                    {
+                        "$ref": "#/components/schemas/COMMON_NFT_ASSET_PROPERTIES"
+                    }
+                ]
+            },
+            "ERC1155_ASSET": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/COMMON_ASSET_PROPERTIES"
+                    },
+                    {
+                        "$ref": "#/components/schemas/COMMON_NFT_ASSET_PROPERTIES"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "description": "The amount of the asset",
+                                "type": "integer",
+                                "minimum": 0
+                            }
+                        }
+                    }
+                ]
+            },
+            "ASSET": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/ETH_ASSET"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ERC20_ASSET"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ERC721_ASSET"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ERC1155_ASSET"
+                    }
+                ]
             },
             "MERKLE_PROOF": {
                 "type": "object",
@@ -1466,11 +1566,6 @@
                 "$comment": "An ethereum address",
                 "description": "an ethereum address represented as 40 hex digits",
                 "pattern": "^0x[a-fA-F0-9]{40}$"
-            },
-            "ASSET_INFO": {
-                "description": "The asset info calculated for a given asset",
-                "type": "string",
-                "pattern": "^0x[a-fA-F0-9]{72}$"
             },
             "ASSET_ID": {
                 "description": "The asset id of for an NFT (ERC721) asset. 32 bytes with 5 MSB zeroed",
