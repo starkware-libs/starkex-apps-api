@@ -1010,9 +1010,6 @@
                             "asset_id": {
                                 "$ref": "#/components/schemas/ASSET_ID"
                             },
-                            "asset_info": {
-                                "$ref": "#/components/schemas/ASSET_INFO"
-                            },
                             "proof": {
                                 "$ref": "#/components/schemas/MERKLE_PROOF"
                             }
@@ -1569,11 +1566,6 @@
                 "$comment": "An ethereum address",
                 "description": "an ethereum address represented as 40 hex digits",
                 "pattern": "^0x[a-fA-F0-9]{40}$"
-            },
-            "ASSET_INFO": {
-                "description": "The asset info calculated for a given asset",
-                "type": "string",
-                "pattern": "^0x[a-fA-F0-9]{72}$"
             },
             "ASSET_ID": {
                 "description": "The asset id of for an NFT (ERC721) asset. 32 bytes with 5 MSB zeroed",
