@@ -1394,9 +1394,6 @@
                     },
                     "asset_id": {
                         "$ref": "#/components/schemas/ASSET_ID"
-                    },
-                    "asset_info": {
-                        "$ref": "#/components/schemas/ASSET_INFO"
                     }
                 }
             },
