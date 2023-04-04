@@ -1,0 +1,115 @@
+{
+    "openrpc": "1.0.0-rc1",
+    "info": {
+        "version": "0.1.0",
+        "title": "StarkEx WalletConnect JSON RPC",
+        "license": {}
+    },
+    "methods": [],
+    "components": {
+        "schemas": {
+            "STARKEX_TRANSACTION": {
+                "description": "the transaction's representation",
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/SPOT_TXN"
+                    }
+                ]
+            },
+            "SPOT_TXN": {
+                "description": "the transaction's representation",
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/SPOT_TRANSFER_TXN"
+                    }
+                ]
+            },
+            "SPOT_TRANSFER_TXN": {
+                "type": "object",
+                "properties": {
+                    "sender_vault_id": {
+                        "description": "The vault that is the source of the transfer",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "receiver_vault_id": {
+                        "description": "The target vault for the transfer",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "amount": {
+                        "description": "Amount transferred",
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "nonce": {
+                        "description": "The nonce used when signing the transaction",
+                        "$ref": "#/components/schemas/NONCE"
+                    },
+                    "expiration_timestamp": {
+                        "description": "The expiration timestamp of the transfer transaction",
+                        "$ref": "#/components/schemas/EXPIRATION_TIMESTAMP"
+                    },
+                    "fee_limit": {
+                        "description": "The fee limit",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9223372036854775808,
+                        "$comment": "upper limit is 2^63, taken from definition of AmountField"
+                    },
+                    "fee_vault_id": {
+                        "description": "The id of the source/target vault",
+                        "$ref": "#/components/schemas/VAULT_ID"
+                    },
+                    "fee_token": {
+                        "description": "The token id of the fee",
+                        "$ref": "#/components/schemas/TOKEN_ID"
+                    },
+                    "token": {
+                        "description": "The id of the asset or token transferred",
+                        "$ref": "#/components/schemas/ASSET_ID"
+                    },
+                    "receiver_public_key": {
+                        "description": "The key of the receiving user",
+                        "$ref": "#/components/schemas/STARK_KEY"
+                    }
+                }
+            },
+            "VAULT_ID": {
+                "description": "A vault id, represented as a hex number",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{16}$",
+                "$comment": "This is a superset of both validium and rollup vault ranges"
+            },
+            "NONCE": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 2147483647,
+                "$comment": "Maximum is 2^31-1, taken from definition of NonceField in StarkEx"
+            },
+            "EXPIRATION_TIMESTAMP": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4194303,
+                "$comment": "upper limit is 2^22-1, taken from StarkEx code - ExpirationTimestampField"
+            },
+            "TOKEN_ID": {
+                "description": "An ID for a token",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]{64}$",
+                "$comment": "A generalized case - 251 bits (and a bit extra)"
+            },
+            "ASSET_ID": {
+                "description": "The asset id of for an NFT (ERC721) asset. 32 bytes with 5 MSB zeroed",
+                "type": "string",
+                "pattern": "^0x0[0-7]{1}[a-fA-F0-9]{62}$"
+            },
+            "STARK_KEY": {
+                "$ref": "#/components/schemas/NUM_AS_HEX"
+            },
+            "NUM_AS_HEX": {
+                "description": "An integer number in hex format (0x...)",
+                "type": "string",
+                "pattern": "^0x[a-fA-F0-9]+$"
+            },
+        }
+    }
+}
