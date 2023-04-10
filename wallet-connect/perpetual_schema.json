@@ -36,6 +36,45 @@
   ],
   "components": {
     "transactions": {
+      "ConditionalTransfer": {
+        "type": "object",
+        "properties": {
+          "type": 5,
+          "asset_id": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "asset_id_fee": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "receiver_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "condition": {
+            "$ref": "#/components/properties/condition"
+          },
+          "sender_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "receiver_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "src_fee_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "max_amount_fee": {
+            "$ref": "#/components/properties/amount"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          }
+        }
+      },
       "Transfer": {
         "type": "object",
         "properties": {
@@ -74,6 +113,9 @@
       }
     },
     "properties": {
+      "condition": {
+        "$ref": "#/components/types/string_felt"
+      },
       "position_id": {
         "$ref": "#/components/types/string_decimal_64"
       },
