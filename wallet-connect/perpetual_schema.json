@@ -21,7 +21,7 @@
           "required": true,
           "oneOf": [
             {
-              "$ref": "#/components/transactions/TransferRequest"
+              "$ref": "#/components/transactions/Transfer"
             }
           ]
         }
@@ -36,7 +36,7 @@
   ],
   "components": {
     "transactions": {
-      "TransferRequest": {
+      "Transfer": {
         "type": "object",
         "properties": {
           "type": 4,
