@@ -1,92 +1,58 @@
 {
   "openrpc": "1.0.0-rc1",
   "info": {
-      "version": "0.1.0",
-      "title": "StarkEx Perpetual WalletConnect JSON RPC",
-      "license": {}
+    "version": "0.1.0",
+    "title": "StarkEx Perpetual WalletConnect JSON RPC",
+    "license": {}
   },
   "methods": [
-      {
-          "name": "starkex_signTransaction",
-          "summary": "signs a StarkEx transaction",
-          "params": [
-              {
-                  "name": "system_id",
-                  "description": "identifies a specific starkex deployment",
-                  "required": true,
-                  "schema": {
-                      "type": "string"
-                  }
-              },
-              {
-                  "name": "starkex_transaction",
-                  "description": "the transaction to sign",
-                  "required": true,
-                  "oneOf": []
-              }
-          ],
-          "result": {
-              "name": "signature",
-              "schema": {
-                  "$ref": "#/components/properties/signature"
-              }
-          }
-      }
-  ],
-  "components": {
-        "properties": {
-          "signature": {
-            "type": "object",
-            "title": "The signature",
-            "required": [
-              "r",
-              "s"
-            ],
-            "properties": {
-              "r": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/types/string_felt"
-                  },
-                  {
-                    "title": "The r ",
-                    "examples": [
-                      "0x18326a6181a507f701968f45f56799b890374a1e329c6b9a37ec3292d92b1f8"
-                    ]
-                  }
-                ]
-              },
-              "s": {
-                "allOf": [
-                  {
-                    "$ref": "#/components/types/string_felt"
-                  },
-                  {
-                    "title": "The s",
-                    "examples": [
-                      "0x66dd6745be06d033149a2bcb686e3ec896fc914ff2cb52dcc1d34bbe220b639"
-                    ]
-                  }
-                ]
-              }
-            },
-            "examples": [
-              {
-                "r": "0x18326a6181a507f701968f45f56799b890374a1e329c6b9a37ec3292d92b1f8",
-                "s": "0x66dd6745be06d033149a2bcb686e3ec896fc914ff2cb52dcc1d34bbe220b639"
-              }
-            ]
+    {
+      "name": "starkex_signTransaction",
+      "params": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
           }
         },
-        "types": {
-          "string_felt": {
-            "type": "string",
-            "pattern": "^0x[0-9a-fA-F]{1,63}$",
-            "bigNumber": {
-              "encoding": "hex",
-              "max": "0x800000000000011000000000000000000000000000000000000000000000001"
-            }
+        {
+          "name": "starkex_transaction",
+          "required": true,
+          "oneOf": []
+        }
+      ],
+      "result": {
+        "name": "signature",
+        "schema": {
+          "$ref": "#/components/properties/signature"
+        }
+      }
+    }
+  ],
+  "components": {
+    "properties": {
+      "signature": {
+        "type": "object",
+        "properties": {
+          "r": {
+            "$ref": "#/components/types/string_felt"
+          },
+          "s": {
+            "$ref": "#/components/types/string_felt"
           }
         }
+      }
+    },
+    "types": {
+      "string_felt": {
+        "type": "string",
+        "pattern": "^0x[0-9a-fA-F]{1,63}$",
+        "bigNumber": {
+          "encoding": "hex",
+          "max": "0x800000000000011000000000000000000000000000000000000000000000001"
+        }
+      }
+    }
   }
 }
