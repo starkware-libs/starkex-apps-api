@@ -19,7 +19,11 @@
         {
           "name": "starkex_transaction",
           "required": true,
-          "oneOf": []
+          "oneOf": [
+            {
+              "$ref": "#/components/transactions/TransferRequest"
+            }
+          ]
         }
       ],
       "result": {
@@ -31,7 +35,57 @@
     }
   ],
   "components": {
+    "transactions": {
+      "TransferRequest": {
+        "type": "object",
+        "properties": {
+          "type": 4,
+          "asset_id": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "asset_id_fee": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "receiver_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "sender_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "receiver_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "src_fee_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "max_amount_fee": {
+            "$ref": "#/components/properties/amount"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          }
+        }
+      }
+    },
     "properties": {
+      "position_id": {
+        "$ref": "#/components/types/string_decimal_64"
+      },
+      "nonce": {
+        "$ref": "#/components/types/string_decimal_32"
+      },
+      "expiration_timestamp": {
+        "$ref": "#/components/types/string_decimal_32"
+      },
+      "amount": {
+        "$ref": "#/components/types/string_decimal_64"
+      },
       "signature": {
         "type": "object",
         "properties": {
@@ -42,9 +96,31 @@
             "$ref": "#/components/types/string_felt"
           }
         }
+      },
+      "asset_id": {
+        "$ref": "#/components/types/string_felt"
+      },
+      "public_key": {
+        "$ref": "#/components/types/string_felt"
       }
     },
     "types": {
+      "string_decimal_32": {
+        "type": "string",
+        "pattern": "^[0-9]{1,10}$",
+        "bigNumber": {
+          "encoding": "decimal",
+          "max": "0xffffffff"
+        }
+      },
+      "string_decimal_64": {
+        "type": "string",
+        "pattern": "^[0-9]{1,20}$",
+        "bigNumber": {
+          "encoding": "decimal",
+          "max": "0xffffffffffffffff"
+        }
+      },
       "string_felt": {
         "type": "string",
         "pattern": "^0x[0-9a-fA-F]{1,63}$",
