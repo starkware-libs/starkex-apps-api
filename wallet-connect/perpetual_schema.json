@@ -25,6 +25,9 @@
             },
             {
               "$ref": "#/components/transactions/ConditionalTransfer"
+            },
+            {
+              "$ref": "#/components/transactions/LimitOrder"
             }
           ]
         }
@@ -39,6 +42,40 @@
   ],
   "components": {
     "transactions": {
+      "LimitOrder": {
+        "type": "object",
+        "properties": {
+          "type": 3,
+          "is_buying_synthetic": "boolean",
+          "asset_id_synthetic": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "asset_id_collateral": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "asset_id_fee": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "amount_synthetic": {
+            "$ref": "#/components/properties/amount"
+          },
+          "amount_collateral": {
+            "$ref": "#/components/properties/amount"
+          },
+          "max_amount_fee": {
+            "$ref": "#/components/properties/amount"
+          },
+          "position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          }
+        }
+      },
       "ConditionalTransfer": {
         "type": "object",
         "properties": {
