@@ -8,16 +8,25 @@
   "methods": [
     {
       "name": "starkex_getAccounts",
-      "params": [],
-      "result": {
-        "name": "accounts",
-        "schema": [
+      "params": [
           {
-            "$ref": "#/components/properties/public_key"
+              "name": "system_id",
+              "required": true,
+              "schema": {
+                  "type": "string"
+              }
           }
-        ]
+      ],
+      "result": {
+          "name": "accounts",
+          "schema": {
+              "type": "array",
+              "items": {
+                  "$ref": "#/components/properties/public_key"
+              }
+          }
       }
-    },
+  },
     {
       "name": "starkex_signTransaction",
       "params": [
