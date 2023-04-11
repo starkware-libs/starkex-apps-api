@@ -62,6 +62,31 @@
           "$ref": "#/components/properties/signature"
         }
       }
+    },
+    {
+      "name": "starkex_signTransactionHash",
+      "params": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "transaction_hash",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/properties/transaction_hash"
+          }
+        }
+      ],
+      "result": {
+        "name": "signature",
+        "schema": {
+          "$ref": "#/components/properties/signature"
+        }
+      }
     }
   ],
   "components": {
@@ -198,6 +223,9 @@
       }
     },
     "properties": {
+      "transaction_hash": {
+        "$ref": "#/components/types/string_felt"
+      },
       "condition": {
         "$ref": "#/components/types/string_felt"
       },
