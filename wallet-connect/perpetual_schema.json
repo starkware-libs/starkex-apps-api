@@ -7,6 +7,18 @@
   },
   "methods": [
     {
+      "name": "starkex_getAccounts",
+      "params": [],
+      "result": {
+        "name": "accounts",
+        "schema": [
+          {
+            "$ref": "#/components/properties/public_key"
+          }
+        ]
+      }
+    },
+    {
       "name": "starkex_signTransaction",
       "params": [
         {
