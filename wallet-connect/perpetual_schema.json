@@ -28,6 +28,9 @@
             },
             {
               "$ref": "#/components/transactions/LimitOrder"
+            },
+            {
+              "$ref": "#/components/transactions/Withdraw"
             }
           ]
         }
@@ -42,6 +45,27 @@
   ],
   "components": {
     "transactions": {
+      "Withdraw": {
+        "type": "object",
+        "properties": {
+          "type": 6,
+          "asset_id_collateral": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          }
+        }
+      },
       "LimitOrder": {
         "type": "object",
         "properties": {
