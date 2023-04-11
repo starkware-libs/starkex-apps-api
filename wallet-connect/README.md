@@ -1,7 +1,3 @@
----
-description: StarkEx Perpetual JSON-RPC Methods
----
-
 # StarkEx
 
 ## starkex_getAccounts
@@ -11,7 +7,7 @@ Returns an array of public Stark keys, which correspond to key pairs available i
 ### Parameters
 
 ```
-1. `system_id` : `String` - an id that uniquely identifies a StarkEx instance (per application, per deployment Mainnet/Testnet)
+1. `system_id` : `String` - an id that uniquely identifies a StarkEx instance
 ```
 
 ### Returns
@@ -48,7 +44,7 @@ Signs an object that allows the wallet to easily parse the specific transaction 
 ### Parameters
 
 ```
-1. `system_id` : `String` - an id that uniquely identifies a StarkEx instance (per application, per deployment Mainnet/Testnet)
+1. `system_id` : `String` - an id that uniquely identifies a StarkEx instance
 2. `starkex_transaction`, `Object` : transaction to be signed
 ```
 
@@ -88,7 +84,7 @@ Signs a hash, without previewing to the users what they are signing on (in this 
 ### Parameters
 
 ```
-1. `system_id` : `String` - an id that uniquely identifies a StarkEx instance (per application, per deployment Mainnet/Testnet)
+1. `system_id` : `String` - an id that uniquely identifies a StarkEx instance
 2. `transaction_hash`, `String` : transaction hash to be signed
 ```
 
