@@ -30,7 +30,7 @@
               "$ref": "#/components/transactions/LimitOrder"
             },
             {
-              "$ref": "#/components/transactions/Withdraw"
+              "$ref": "#/components/transactions/Withdrawl"
             }
           ]
         }
@@ -45,7 +45,7 @@
   ],
   "components": {
     "transactions": {
-      "Withdraw": {
+      "Withdrawl": {
         "type": "object",
         "properties": {
           "type": 6,
