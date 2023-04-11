@@ -1,4 +1,4 @@
-# StarkEx
+# StarkEx Perpetual
 
 ## starkex_getAccounts
 
