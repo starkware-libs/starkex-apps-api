@@ -1,0 +1,460 @@
+{
+  "openrpc": "1.0.0-rc1",
+  "info": {
+    "version": "0.1.0",
+    "title": "StarkEx Perpetual WalletConnect JSON RPC",
+    "license": {}
+  },
+  "methods": [
+    {
+      "name": "starkex_getAccounts",
+      "params": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "accounts",
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/properties/public_key"
+          }
+        }
+      }
+    },
+    {
+      "name": "starkex_signTransaction",
+      "params": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "starkex_transaction",
+          "required": true,
+          "oneOf": [
+            {
+              "$ref": "#/components/transactions/WITHDRAWAL"
+            },
+            {
+              "$ref": "#/components/transactions/LIMIT_ORDER"
+            },
+            {
+              "$ref": "#/components/transactions/TRANSFER"
+            },
+            {
+              "$ref": "#/components/transactions/CONDITIONAL_TRANSFER"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "name": "signature",
+        "schema": {
+          "$ref": "#/components/properties/signature"
+        }
+      }
+    },
+    {
+      "name": "starkex_signTransactionHash",
+      "params": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "transaction_hash",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/properties/transaction_hash"
+          }
+        }
+      ],
+      "result": {
+        "name": "signature",
+        "schema": {
+          "$ref": "#/components/properties/signature"
+        }
+      }
+    }
+  ],
+  "components": {
+    "transactions": {
+      "WITHDRAWAL": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "amount",
+          "expiration_timestamp",
+          "nonce",
+          "position_id",
+          "public_key",
+          "type"
+        ],
+        "properties": {
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen,asset_id_collateral:252,6:10|position_id:64|nonce:32|amount:64|expiration_timestamp:32|0:49"
+          },
+          "asset_id_collateral": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "type": {
+            "const": "WITHDRAWAL"
+          }
+        },
+        "example": {
+          "amount": "2569146471088859254",
+          "expiration_timestamp": "631194409",
+          "nonce": "3433407905",
+          "position_id": "7758176404715800194",
+          "public_key": "0x35989d400b783796677a03aec2a321cd7e0f8e85d9e62f595209ca9b17beefc",
+          "signature": {
+            "r": "0x4b3b9e4934d635f6d1d015212cf773217abd65a32a804f0bd5c6cf3eab926f4",
+            "s": "0x377ea02a33203f8f497ff1290e9b59c1e586134e41c3287b262f9c6e02e66c2"
+          },
+          "type": "WITHDRAWAL"
+        }
+      },
+      "LIMIT_ORDER": {
+        "oneOf": [
+          {
+            "$ref": "#/components/transactions/LIMIT_ORDER_BUYING"
+          },
+          {
+            "$ref": "#/components/transactions/LIMIT_ORDER_SELLING"
+          }
+        ]
+      },
+      "LIMIT_ORDER_BUYING": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "amount_collateral",
+          "amount_fee",
+          "amount_synthetic",
+          "asset_id_collateral",
+          "asset_id_synthetic",
+          "expiration_timestamp",
+          "is_buying_synthetic",
+          "nonce",
+          "order_type",
+          "position_id",
+          "public_key"
+        ],
+        "properties": {
+          "amount_collateral": {
+            "$ref": "#/components/properties/amount"
+          },
+          "amount_fee": {
+            "$ref": "#/components/properties/amount"
+          },
+          "amount_synthetic": {
+            "$ref": "#/components/properties/amount"
+          },
+          "asset_id_collateral": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "asset_id_synthetic": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "asset_id_fee": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "is_buying_synthetic": {
+            "const": true
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "type": {
+            "const": "LIMIT_ORDER"
+          },
+          "position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen, pedersen, pedersen,pedersen,asset_id_collateral:252,asset_id_synthetic:252,asset_id_fee:252,0:27|amount_collateral:64|amount_synthetic:64|amount_fee:64|nonce:32,3:10|position_id:64|position_id:64|position_id:64|expiration_timestamp:32|0:17"
+          }
+        }
+      },
+      "LIMIT_ORDER_SELLING": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "amount_collateral",
+          "amount_fee",
+          "amount_synthetic",
+          "asset_id_collateral",
+          "asset_id_synthetic",
+          "expiration_timestamp",
+          "is_buying_synthetic",
+          "nonce",
+          "order_type",
+          "position_id",
+          "public_key"
+        ],
+        "properties": {
+          "amount_collateral": {
+            "$ref": "#/components/properties/amount"
+          },
+          "amount_fee": {
+            "$ref": "#/components/properties/amount"
+          },
+          "amount_synthetic": {
+            "$ref": "#/components/properties/amount"
+          },
+          "asset_id_collateral": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "asset_id_synthetic": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "asset_id_fee": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "is_buying_synthetic": {
+            "const": false
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "order_type": {
+            "const": "LIMIT_ORDER"
+          },
+          "position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen, pedersen, pedersen,pedersen,asset_id_synthetic:252,asset_id_collateral:252,asset_id_fee:252,0:27|amount_collateral:64|amount_synthetic:64|amount_fee:64|nonce:32,3:10|position_id:64|position_id:64|position_id:64|expiration_timestamp:32|0:17"
+          }
+        }
+      },
+      "TRANSFER": {
+        "type": "object",
+        "required": [
+          "amount",
+          "asset_id",
+          "expiration_timestamp",
+          "nonce",
+          "receiver_position_id",
+          "receiver_public_key",
+          "sender_position_id",
+          "sender_public_key",
+          "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "asset_id_collateral": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "asset_id": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "receiver_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "receiver_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "sender_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "sender_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen, pedersen, pedersen,pedersen,asset_id:252,0:252,receiver_public_key:252,0:27|sender_position_id:64|receiver_position_id:64|sender_position_id:64|nonce:32,4:10|amount:64|0:64|expiration_timestamp:32|0:81"
+          },
+          "type": {
+            "const": "TRANSFER"
+          }
+        }
+      },
+      "CONDITIONAL_TRANSFER": {
+        "type": "object",
+        "required": [
+          "amount",
+          "asset_id",
+          "expiration_timestamp",
+          "fact",
+          "fact_registry_address",
+          "nonce",
+          "receiver_position_id",
+          "receiver_public_key",
+          "sender_position_id",
+          "sender_public_key",
+          "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "asset_id": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "fact": {
+            "$ref": "#/components/properties/fact"
+          },
+          "fact_registry_address": {
+            "$ref": "#/components/properties/eth_address"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "receiver_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "receiver_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "sender_position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "sender_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen, pedersen, pedersen,pedersen,pedersen,asset_id:252,0:252,receiver_public_key:252,keccak,fact_registry_address:address,fact:bytes,0:27|sender_position_id:64|receiver_position_id:64|sender_position_id:64|nonce:32,5:10|amount:64|0:64|expiration_timestamp:32|0:81"
+          },
+          "type": {
+            "const": "CONDITIONAL_TRANSFER"
+          }
+        }
+      }
+    },
+    "properties": {
+      "amount": {
+        "$ref": "#/components/types/string_decimal_64"
+      },
+      "position_id": {
+        "$ref": "#/components/types/string_decimal_64"
+      },
+      "public_key": {
+        "$ref": "#/components/types/string_felt"
+      },
+      "signature": {
+        "type": "object",
+        "properties": {
+          "r": {
+            "$ref": "#/components/types/string_felt"
+          },
+          "s": {
+            "$ref": "#/components/types/string_felt"
+          }
+        }
+      },
+      "eth_address": {
+        "$ref": "#/components/types/string_hex_160"
+      },
+      "expiration_timestamp": {
+        "$ref": "#/components/types/string_decimal_32"
+      },
+      "nonce": {
+        "$ref": "#/components/types/string_decimal_32"
+      },
+      "asset_id": {
+        "$ref": "#/components/types/string_felt"
+      },
+      "transaction_hash": {
+        "$ref": "#/components/types/string_felt"
+      },
+      "fact": {
+        "$ref": "#/components/types/string_fact"
+      }
+    },
+    "types": {
+      "string_decimal_32": {
+        "type": "string",
+        "pattern": "^[0-9]{1,10}$",
+        "bigNumber": {
+          "encoding": "decimal",
+          "max": "0xffffffff"
+        }
+      },
+      "string_decimal_64": {
+        "type": "string",
+        "pattern": "^[0-9]{1,20}$",
+        "bigNumber": {
+          "encoding": "decimal",
+          "max": "0xffffffffffffffff"
+        }
+      },
+      "string_hex_160": {
+        "type": "string",
+        "pattern": "^0x[0-9a-fA-F]{1,40}$"
+      },
+      "string_felt": {
+        "type": "string",
+        "pattern": "^0x[0-9a-fA-F]{1,63}$",
+        "bigNumber": {
+          "encoding": "hex",
+          "max": "0x800000000000011000000000000000000000000000000000000000000000001"
+        }
+      },
+      "string_fact": {
+        "type": "string",
+        "pattern": "^[0-9a-fA-F]{1,64}$",
+        "title": "32 bytes of data",
+        "examples": [
+          "6461646162616461626164616461626164616261646164616261646162616461"
+        ]
+      }
+    }
+  }
+}
