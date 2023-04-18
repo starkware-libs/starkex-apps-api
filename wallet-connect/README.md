@@ -1,4 +1,4 @@
-# StarkEx Perpetual
+# StarkEx | WalletConnect
 
 ## starkex_getAccounts
 
