@@ -65,7 +65,17 @@ Signs an object that allows the wallet to easily parse the specific transaction 
   "id": 1,
   "jsonrpc": "2.0",
   "method": "starkex_signTransaction",
-  "params": ["dydx_mainnet", {}]
+  "params": ["dydx_mainnet", {
+    "asset_id": "0x1",
+    "receiver_public_key": "0x1",
+    "sender_position_id": "1",
+    "receiver_position_id": "1",
+    "nonce": "0",
+    "amount": "1000",
+    "expiration_timestamp": "100",
+    "sender_public_key": "0x1",
+    "type": "TRANSFER"
+  }]
 }
 
 
