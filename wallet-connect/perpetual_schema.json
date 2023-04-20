@@ -45,6 +45,9 @@
               "$ref": "#/components/transactions/WITHDRAWAL"
             },
             {
+              "$ref": "#/components/transactions/WITHDRAWAL_TO_ADDRESS"
+            },
+            {
               "$ref": "#/components/transactions/LIMIT_ORDER"
             },
             {
@@ -140,6 +143,62 @@
             "s": "0x377ea02a33203f8f497ff1290e9b59c1e586134e41c3287b262f9c6e02e66c2"
           },
           "type": "WITHDRAWAL"
+        }
+      },
+      "WITHDRAWAL_TO_ADDRESS": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "amount",
+          "eth_address",
+          "expiration_timestamp",
+          "nonce",
+          "position_id",
+          "public_key",
+          "type"
+        ],
+        "properties": {
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "eth_address": {
+            "$ref": "#/components/properties/eth_address"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "position_id": {
+            "$ref": "#/components/properties/position_id"
+          },
+          "public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen,pedersen,asset_id_collateral:252,eth_address:160,7:10|position_id:64|nonce:32|amount:64|expiration_timestamp:32|0:49"
+          },
+          "asset_id_collateral": {
+            "$ref": "#/components/properties/asset_id"
+          },
+          "type": {
+            "const": "WITHDRAWAL_TO_ADDRESS"
+          }
+        },
+        "example": {
+          "amount": "1682637359498011204",
+          "eth_address": "0xB6aD5EfBd6aDfa29dEfad5BC0f8cE0ad57d4c5Fb",
+          "expiration_timestamp": "2101470722",
+          "nonce": "4265854110",
+          "position_id": "7758176404715800194",
+          "public_key": "0x1b9e4c42a399f6ce069127df5ad618489aad21b1687acf4d4b09e08744084a7",
+          "signature": {
+            "r": "0x18326a6181a507f701968f45f56799b890374a1e329c6b9a37ec3292d92b1f8",
+            "s": "0x66dd6745be06d033149a2bcb686e3ec896fc914ff2cb52dcc1d34bbe220b639"
+          },
+          "type": "WITHDRAWAL_TO_ADDRESS"
         }
       },
       "LIMIT_ORDER": {
