@@ -1,0 +1,456 @@
+{
+  "openrpc": "1.0.0-rc1",
+  "info": {
+    "version": "0.1.0",
+    "title": "StarkEx Spot WalletConnect JSON RPC",
+    "license": {}
+  },
+  "methods": [
+    {
+      "name": "starkex_getAccounts",
+      "params": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "result": {
+        "name": "accounts",
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/properties/public_key"
+          }
+        }
+      }
+    },
+    {
+      "name": "starkex_signTransaction",
+      "params": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "starkex_transaction",
+          "required": true,
+          "oneOf": [
+            {
+              "$ref": "#/components/transactions/OrderL2Request"
+            },
+            {
+              "$ref": "#/components/transactions/TransferRequest"
+            },
+            {
+              "$ref": "#/components/transactions/ConditionalTransferRequest"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "name": "signature",
+        "schema": {
+          "$ref": "#/components/properties/signature"
+        }
+      }
+    },
+    {
+      "name": "starkex_signTransactionHash",
+      "params": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "transaction_hash",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/properties/transaction_hash"
+          }
+        }
+      ],
+      "result": {
+        "name": "signature",
+        "schema": {
+          "$ref": "#/components/properties/signature"
+        }
+      }
+    }
+  ],
+  "components": {
+    "transactions": {
+      "OrderL2Request": {
+        "type": "object",
+        "required": [
+          "amount_buy",
+          "amount_sell",
+          "expiration_timestamp",
+          "nonce",
+          "public_key",
+          "token_buy",
+          "token_sell",
+          "type",
+          "vault_id_buy",
+          "vault_id_sell"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "amount_buy": {
+            "$ref": "#/components/properties/amount"
+          },
+          "amount_sell": {
+            "$ref": "#/components/properties/amount"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen, pedersen, pedersen,pedersen,token_sell:252,token_buy:252,fee_info.token_id?0:252,0:27|amount_sell:64|amount_buy:64|fee_info.fee_limit?0:64|nonce:32,3:10|fee_info.source_vault_id?0:64|vault_id_sell:64|vault_id_buy:64|expiration_timestamp:32|0:17"
+          },
+          "token_buy": {
+            "$ref": "#/components/properties/token_id"
+          },
+          "token_sell": {
+            "$ref": "#/components/properties/token_id"
+          },
+          "type": {
+            "const": "OrderL2Request"
+          },
+          "vault_id_buy": {
+            "$ref": "#/components/properties/vault_id"
+          },
+          "vault_id_sell": {
+            "$ref": "#/components/properties/vault_id"
+          },
+          "fee_info": {
+            "$ref": "#/components/objects/FeeInfoUser"
+          }
+        },
+        "example": {
+          "amount_buy": "80",
+          "amount_sell": "70",
+          "expiration_timestamp": 3396833,
+          "nonce": 1654615998,
+          "public_key": "0x19c78df8f4ff31e78de58575487ce1eaf19922ad9b8a714e61a441c12e0c8b2",
+          "signature": {
+            "r": "0x0",
+            "s": "0x0"
+          },
+          "token_buy": "0x22222222222222222222222222222222222222222222222222222222222222",
+          "token_sell": "0x11111111111111111111111111111111111111111111111111111111111111",
+          "type": "OrderL2Request",
+          "vault_id_buy": 9223372038941819365,
+          "vault_id_sell": 9223372037028654900
+        }
+      },
+      "TransferRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "token",
+          "expiration_timestamp",
+          "nonce",
+          "receiver_vault_id",
+          "receiver_public_key",
+          "sender_vault_id",
+          "sender_public_key",
+          "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "fee_info_user": {
+            "$ref": "#/components/objects/FeeInfoUser"
+          },
+          "fee_info_exchange": {
+            "$ref": "#/components/objects/FeeInfoExchange"
+          },
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "token": {
+            "$ref": "#/components/properties/token_id"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "receiver_vault_id": {
+            "$ref": "#/components/properties/vault_id"
+          },
+          "receiver_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "sender_vault_id": {
+            "$ref": "#/components/properties/vault_id"
+          },
+          "sender_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen, pedersen, pedersen,pedersen,token:252,fee_info_user.token_id?0:252,receiver_public_key:252,0:27|sender_vault_id:64|receiver_vault_id:64|fee_info_user.source_vault_id?0:64|nonce:32,4:10|amount:64|fee_info_user.fee_limit?0:64|expiration_timestamp:32|0:81"
+          },
+          "type": {
+            "const": "TransferRequest"
+          }
+        },
+        "example": {
+          "amount": "7106521602475165645",
+          "expiration_timestamp": 2791313,
+          "fee_info_exchange": {
+            "destination_stark_key": "0x6f25e2a5a92118719c78df48f4ff31e78de58575487ce1eaf19922ad9b8a714",
+            "destination_vault_id": 9223372038661117013,
+            "fee_taken": "5"
+          },
+          "fee_info_user": {
+            "fee_limit": "15",
+            "source_vault_id": 9223372037454979375,
+            "token_id": "0x23a77118133287637ebdcd9e87a1613e443df789558867f5ba91faf7a024204"
+          },
+          "nonce": 1806341205,
+          "receiver_public_key": "0x4d2b9de1beb37117d41e602eece328bff7b118e820865d6e005b86051ef1922",
+          "receiver_vault_id": 9223372037390833737,
+          "sender_public_key": "0x6f25e2a5a92118719c78df48f4ff31e78de58575487ce1eaf19922ad9b8a714",
+          "sender_vault_id": 9223372037733001032,
+          "signature": {
+            "r": "0x0",
+            "s": "0x0"
+          },
+          "token": "0xff18e042af9fc385776e9add84f39e71545a137a1d50068d723104f77383c1",
+          "type": "TransferRequest"
+        }
+      },
+      "ConditionalTransferRequest": {
+        "type": "object",
+        "required": [
+          "amount",
+          "token",
+          "expiration_timestamp",
+          "fact",
+          "fact_registry_address",
+          "nonce",
+          "receiver_vault_id",
+          "receiver_public_key",
+          "sender_vault_id",
+          "sender_public_key",
+          "type"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "fee_info_user": {
+            "$ref": "#/components/objects/FeeInfoUser"
+          },
+          "fee_info_exchange": {
+            "$ref": "#/components/objects/FeeInfoExchange"
+          },
+          "amount": {
+            "$ref": "#/components/properties/amount"
+          },
+          "token": {
+            "$ref": "#/components/properties/token_id"
+          },
+          "expiration_timestamp": {
+            "$ref": "#/components/properties/expiration_timestamp"
+          },
+          "fact": {
+            "$ref": "#/components/properties/fact"
+          },
+          "fact_registry_address": {
+            "$ref": "#/components/properties/eth_address"
+          },
+          "nonce": {
+            "$ref": "#/components/properties/nonce"
+          },
+          "receiver_vault_id": {
+            "$ref": "#/components/properties/vault_id"
+          },
+          "receiver_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "sender_vault_id": {
+            "$ref": "#/components/properties/vault_id"
+          },
+          "sender_public_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "signature": {
+            "$ref": "#/components/properties/signature",
+            "construct": "pedersen,pedersen, pedersen, pedersen,pedersen,token:252,fee_info_user.token_id?0:252,receiver_public_key:252,keccak,fact_registry_address:address,fact:bytes,0:27|sender_vault_id:64|receiver_vault_id:64|fee_info_user.source_vault_id?0:64|nonce:32,5:10|amount:64|fee_info_user.fee_limit?0:64|expiration_timestamp:32|0:81"
+          },
+          "type": {
+            "const": "ConditionalTransferRequest"
+          }
+        },
+        "example": {
+          "amount": "7106521602475165645",
+          "expiration_timestamp": 2791313,
+          "fact": "cd7110159df66d2b4164484d6440f7099f8492f5c20d4cde01009b0d4ab85bbf",
+          "fact_registry_address": "0xCc6E2d20cC5AaFDCa329bA2d63e5ba5edD684B2F",
+          "nonce": 1806341205,
+          "receiver_public_key": "0x4d2b9de1beb37117d41e602eece328bff7b118e820865d6e005b86051ef1922",
+          "receiver_vault_id": 9223372037390833737,
+          "sender_public_key": "0x6f25e2a5a92118719c78df48f4ff31e78de58575487ce1eaf19922ad9b8a714",
+          "sender_vault_id": 9223372037733001032,
+          "signature": {
+            "r": "0x0",
+            "s": "0x0"
+          },
+          "token": "0xff18e042af9fc385776e9add84f39e71545a137a1d50068d723104f77383c1",
+          "type": "ConditionalTransferRequest"
+        }
+      }
+    },
+    "objects": {
+      "FeeInfoUser": {
+        "type": "object",
+        "required": [
+          "fee_limit",
+          "source_vault_id",
+          "token_id"
+        ],
+        "properties": {
+          "fee_limit": {
+            "$ref": "#/components/properties/amount"
+          },
+          "source_vault_id": {
+            "$ref": "#/components/properties/vault_id"
+          },
+          "token_id": {
+            "$ref": "#/components/properties/token_id"
+          }
+        }
+      },
+      "FeeInfoExchange": {
+        "type": "object",
+        "required": [
+          "destination_stark_key",
+          "destination_vault_id",
+          "fee_taken"
+        ],
+        "properties": {
+          "destination_stark_key": {
+            "$ref": "#/components/properties/public_key"
+          },
+          "destination_vault_id": {
+            "$ref": "#/components/properties/vault_id"
+          },
+          "fee_taken": {
+            "$ref": "#/components/properties/amount"
+          }
+        }
+      }
+    },
+    "properties": {
+      "vault_id": {
+        "$ref": "#/components/types/number_or_string_64"
+      },
+      "token_id": {
+        "$ref": "#/components/types/string_hex_251"
+      },
+      "amount": {
+        "$ref": "#/components/types/string_decimal_64"
+      },
+      "public_key": {
+        "$ref": "#/components/types/string_felt"
+      },
+      "signature": {
+        "type": "object",
+        "properties": {
+          "r": {
+            "$ref": "#/components/types/string_felt"
+          },
+          "s": {
+            "$ref": "#/components/types/string_felt"
+          }
+        }
+      },
+      "eth_address": {
+        "$ref": "#/components/types/string_hex_160"
+      },
+      "expiration_timestamp": {
+        "$ref": "#/components/types/string_decimal_32"
+      },
+      "nonce": {
+        "$ref": "#/components/types/string_decimal_32"
+      },
+      "transaction_hash": {
+        "$ref": "#/components/types/string_felt"
+      },
+      "fact": {
+        "$ref": "#/components/types/string_fact"
+      }
+    },
+    "types": {
+      "number_or_string_64": {
+        "oneOf": [
+          {
+            "$ref": "#/components/types/string_decimal_64"
+          },
+          {
+            "type": "integer",
+            "minimum": 0
+          }
+        ]
+      },
+      "string_hex_251": {
+        "type": "string",
+        "pattern": "^0x[0-9a-fA-F]{1,63}$",
+        "bigNumber": {
+          "encoding": "hex",
+          "max": "0x7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      },
+      "string_decimal_32": {
+        "type": "string",
+        "pattern": "^[0-9]{1,10}$",
+        "bigNumber": {
+          "encoding": "decimal",
+          "max": "0xffffffff"
+        }
+      },
+      "string_decimal_64": {
+        "type": "string",
+        "pattern": "^[0-9]{1,20}$",
+        "bigNumber": {
+          "encoding": "decimal",
+          "max": "0xffffffffffffffff"
+        }
+      },
+      "string_hex_160": {
+        "type": "string",
+        "pattern": "^0x[0-9a-fA-F]{1,40}$"
+      },
+      "string_felt": {
+        "type": "string",
+        "pattern": "^0x[0-9a-fA-F]{1,63}$",
+        "bigNumber": {
+          "encoding": "hex",
+          "max": "0x800000000000011000000000000000000000000000000000000000000000001"
+        }
+      },
+      "string_fact": {
+        "type": "string",
+        "pattern": "^[0-9a-fA-F]{1,64}$",
+        "title": "32 bytes of data"
+      }
+    }
+  }
+}
